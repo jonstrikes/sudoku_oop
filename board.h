@@ -12,9 +12,13 @@ struct boardType{
     int maxCellValue;
     int **board;
     int **fixed;
+
+    void printBoard();
+
+private:
+    static std::string cellToString(int cell);
 };
 
-void printBoard(boardType);
-std::string cellToString(int cell);
+
 
 #endif //SUDOKU_OOP_BOARD_H

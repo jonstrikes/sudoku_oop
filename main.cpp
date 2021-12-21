@@ -10,7 +10,10 @@ int main() {
     std::string order5 = "benchmark_puzzles/benchmarks5x5/80/puzzle13.txt";
 
     boardType board = readFile(order3);
-    printBoard(board);
+    board.printBoard();
+
+    fillGrid(board);
+    board.printBoard();
 
     int *rowObjs = new int [board.N];
     int *colObjs = new int [board.N];
@@ -24,30 +27,28 @@ int main() {
 
     int obj = calcObj(board, rowObjs, colObjs);
     std::cout<<std::endl<< obj <<std::endl;
-    printBoard(board);
+    board.printBoard();
 
     std::cout<<std::endl<< "NOW SWAPPING" <<std::endl;
     neighbourhoodSwap(board, cellsPrev);
-    printBoard(board);
+    board.printBoard();
 
     int gap = recalcObj(board, rowObjs, colObjs, cellsPrev, rowPrevObjs, colPrevObjs);
     std::cout<<std::endl<< "CHANGE CALCULATED: " << gap << " CURRENT OBJECTIVE VALUE: " << calcObj(board, rowObjs, colObjs) <<std::endl;
-    printBoard(board);
+    board.printBoard();
 
     undoMove(board, rowObjs, colObjs, cellsPrev, rowPrevObjs, colPrevObjs);
     std::cout<<std::endl<< "UNDONE MOVE:" << " CURRENT OBJECTIVE VALUE: " << calcObj(board, rowObjs, colObjs) <<  std::endl;
-    printBoard(board);
+    board.printBoard();
 
-    int change;
-    auto selector = Selector(selectionMethod(SR));
-    //test one run
+//    int change;
+//    auto selector = Selector(selectionMethod(SR));
+//    //test one run
 //
 //    //selection
 //    change = selector.select();
 //
 //    // move acceptance
-
-
 
     return 0;
 }
