@@ -74,26 +74,18 @@ int calcObj(boardType *board) {
 
 // recalculates objective function for only the rows and columns changed
 // returns the resulting change in objective value
-int recalcObj(boardType *board, std::vector<std::tuple<int, int, int>> *changedCells,
-              std::map<int, int> *rowPrevObjs, std::map<int, int> *colPrevObjs) {
-    //MAPS SUCK. DONT USE MAPS WHEN UNDOING MORETHAN 1 MOVE, MIGHT LOSE INFORMATION
-
-    //store row and col objective values before change
-    for (std::tuple<int, int, int> cell : *changedCells) {
-        int row = std::get<0>(cell), col = std::get<1>(cell);
-        rowPrevObjs->insert(std::pair<int, int>(row, board->rowObjectives[row]));
-        colPrevObjs->insert(std::pair<int, int>(col, board->colObjectives[col]));
-    }
+int recalcObj(boardType *board) {
 
     vector<int> possibleValues;
     int value = board->minCellValue;
     for (int i = 0; i < board->N; i++, value++) possibleValues.push_back(value);
 
+    HistoryEntry lastChange = board->moveHistory.peekLast();
     int change = 0;
     //for each rowChanged
-    for (const auto &pair : *rowPrevObjs) {
+    for (const auto &rowData : lastChange.changedRowObjectives) {
         //get the changed row id and collect values along it
-        int rc = pair.first;
+        int rc = rowData.first;
         std::vector<int> rowValues(board->N);
         for (int i = 0; i < board->N; i++) {
             rowValues.push_back(board->board[rc][i]);
@@ -105,16 +97,16 @@ int recalcObj(boardType *board, std::vector<std::tuple<int, int, int>> *changedC
             if (std::find(rowValues.begin(), rowValues.end(), possibleValue) == rowValues.end())
                 rowCost++;
         }
-        std::cout << "row " << rc << " prev cost " << rowPrevObjs->find(rc)->second << " cost " << rowCost << std::endl;
+        std::cout << "row " << rc << " prev cost " << rowData.second << " cost " << rowCost << std::endl;
 
         change += rowCost - board->rowObjectives[rc];
         board->rowObjectives[rc] = rowCost;
     }
 
     //for each colChanged
-    for (const auto &pair : *colPrevObjs) {
+    for (const auto &colData : lastChange.changedColObjectives) {
         //get the changed col id and collect values along it
-        int cc = pair.first;
+        int cc = colData.first;
         std::vector<int> colValues(board->N);
         for (int i = 0; i < board->N; i++) {
             colValues.push_back(board->board[i][cc]);
@@ -126,7 +118,7 @@ int recalcObj(boardType *board, std::vector<std::tuple<int, int, int>> *changedC
             if (std::find(colValues.begin(), colValues.end(), possibleValue) == colValues.end())
                 colCost++;
         }
-        std::cout << "col " << cc << " prev cost " << colPrevObjs->find(cc)->second << " cost " << colCost << std::endl;
+        std::cout << "col " << cc << " prev cost " << colData.second << " cost " << colCost << std::endl;
 
         change += colCost - board->colObjectives[cc];
         board->colObjectives[cc] = colCost;
@@ -135,30 +127,4 @@ int recalcObj(boardType *board, std::vector<std::tuple<int, int, int>> *changedC
     return change;
 }
 
-void undoMove(boardType *board, std::vector<std::tuple<int, int, int>> *changedCells,
-              std::map<int, int> *rowPrevObjs, std::map<int, int> *colPrevObjs) {
-    //MIGHT WANT TO MAKE THIS ITERATE THE VECTOR & MAPS IN REVERSE, TO FOLLOW MOVE CHRONOLOGY IN CASE SOME METAHEURISTIC WANTS TO BACKTRACK MANY MOVES
-    //VECTORS 100% NEED TO BE CLEARED ELSEWHERE OR UNDO MOVE WILL UNDO A SEQUENCE OF MOVES
-
-    //reset cells that were changed
-    for (auto const &triple : *changedCells) {
-        //a tuple triple here is <row, col, value>
-        board->board[std::get<0>(triple)][std::get<1>(triple)] = std::get<2>(triple);
-    }
-    //reset objective scores of rows to previous move
-    for (auto const &pair : *rowPrevObjs) {
-        //a pair is row, previous row score
-        board->rowObjectives[std::get<0>(pair)] = std::get<1>(pair);
-    }
-    //reset objective scores of columns to previous move
-    for (auto const &pair : *rowPrevObjs) {
-        //a pair is col, previous col score
-        board->colObjectives[std::get<0>(pair)] = std::get<1>(pair);
-    }
-
-    //board undone, clear data
-    changedCells->clear();
-    rowPrevObjs->clear();
-    colPrevObjs->clear();
-}
 

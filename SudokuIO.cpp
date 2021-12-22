@@ -49,6 +49,8 @@ boardType readFile(const string& fileDir){
 
     //initialise total objective to some non zero value
     board.totalObjective = N * 2 * N;
+    //initialise boards move history
+    board.moveHistory = MoveHistory();
 
     return board;
 }

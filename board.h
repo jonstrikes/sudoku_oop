@@ -6,6 +6,8 @@
 #include <vector>
 #include <iostream>
 
+#include "MoveHistory.h"
+
 using std::vector;
 
 struct boardType{
@@ -22,7 +24,16 @@ struct boardType{
     vector<int> colObjectives;
     int totalObjective;
 
+    MoveHistory moveHistory;
+
     void printBoard();
+
+    //records a change from a sequence of moves
+    void rememberChange(std::vector<MoveData> &changedCells);
+    //restores board and objective values to last recorded state, discarding respective entry from history
+    void undoChange();
+    //discards all records of previous changes from history
+    void acceptChange();
 
 private:
     static std::string cellToString(int cell);

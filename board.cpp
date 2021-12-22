@@ -31,3 +31,35 @@ string boardType::cellToString(int value){
     return cell;
 }
 
+//records a move
+void boardType::rememberChange(std::vector<MoveData> &changedCells){
+    this->moveHistory.recordChange(changedCells, rowObjectives, colObjectives);
+}
+
+//restores board and objective values to last recorded state, discarding respective entry from history
+void boardType::undoChange(){
+    HistoryEntry lastChange = moveHistory.popChange();
+
+    //reset cells that were changed
+    for (MoveData cellChanged : lastChange.changedCells) {
+        board[cellChanged.getRow()][cellChanged.getCol()] = cellChanged.getVal();
+    }
+
+    //reset objective scores of rows to previous move
+    for (auto rowChange : lastChange.changedRowObjectives) {
+        //a pair is row, previous row score
+        rowObjectives[rowChange.first] = rowChange.second;
+    }
+
+    //reset objective scores of rows to previous move
+    for (auto colChange : lastChange.changedColObjectives) {
+        //a pair is row, previous row score
+        rowObjectives[colChange.first] = colChange.second;
+    }
+}
+
+//discards all records of previous changes from history
+void boardType::acceptChange(){
+    moveHistory.popChange();
+}
+

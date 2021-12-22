@@ -7,12 +7,16 @@ set(PROJECT_HEADERS
         Solver.h
         SudokuIO.h
         LLH.h
+        MoveHistory.h
+        MoveData.h
         board.h)
 
 set(PROJECT_SOURCES
         main.cpp
         SudokuIO.cpp
         LLH.cpp
+        MoveHistory.cpp
+        MoveData.cpp
         Solver.cpp
         board.cpp
         )

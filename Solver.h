@@ -22,8 +22,7 @@
 void fillGrid(boardType *board);
 void undoMove(boardType *board, std::vector<std::tuple<int, int, int>> *changedCells,
               std::map<int, int> *rowPrevObjs, std::map<int, int> *colPrevObjs);
-int recalcObj(boardType *board, std::vector<std::tuple<int, int, int>> *changedCells,
-              std::map<int, int> *rowPrevObjs, std::map<int, int> *colPrevObjs);
+int recalcObj(boardType *board);
 int calcObj(boardType *board);
 
 

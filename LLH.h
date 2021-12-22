@@ -4,6 +4,6 @@
 #include "board.h"
 #include <vector>
 #include <tuple>
-void neighbourhoodSwap(boardType *board, std::vector<std::tuple<int, int, int>> *changedCells);
+void neighbourhoodSwap(boardType *board);
 
 #endif //SUDOKU_OOP_LLHMANAGER_H
