@@ -16,9 +16,6 @@ int main() {
 
     fillGrid(&board);
 
-    int colObjs[board.N];
-    int rowObjs[board.N];
-
     //work vectors
     //previous cells as a tuple of <row, col, value>
     auto *cellsPrev = new std::vector<std::tuple<int, int, int>>();
@@ -26,7 +23,7 @@ int main() {
     auto *rowPrevObjs = new std::map<int, int>();
     auto *colPrevObjs = new std::map<int, int>();
 
-    int obj = calcObj(&board, rowObjs, colObjs);
+    int obj = calcObj(&board);
     std::cout<<std::endl<< obj <<std::endl;
     board.printBoard();
 
@@ -34,12 +31,12 @@ int main() {
     neighbourhoodSwap(&board, cellsPrev);
     board.printBoard();
 
-    int gap = recalcObj(&board, rowObjs, colObjs, cellsPrev, rowPrevObjs, colPrevObjs);
-    std::cout<<std::endl<< "CHANGE CALCULATED: " << gap << " CURRENT OBJECTIVE VALUE: " << calcObj(&board, rowObjs, colObjs) <<std::endl;
+    int gap = recalcObj(&board, cellsPrev, rowPrevObjs, colPrevObjs);
+    std::cout<<std::endl<< "CHANGE CALCULATED: " << gap << " CURRENT OBJECTIVE VALUE: " << calcObj(&board) <<std::endl;
     board.printBoard();
 
-    undoMove(&board, rowObjs, colObjs, cellsPrev, rowPrevObjs, colPrevObjs);
-    std::cout<<std::endl<< "UNDONE MOVE:" << " CURRENT OBJECTIVE VALUE: " << calcObj(&board, rowObjs, colObjs) <<  std::endl;
+    undoMove(&board, cellsPrev, rowPrevObjs, colPrevObjs);
+    std::cout<<std::endl<< "UNDONE MOVE:" << " CURRENT OBJECTIVE VALUE: " << calcObj(&board) <<  std::endl;
     board.printBoard();
 
 //    int change;

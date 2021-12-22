@@ -14,11 +14,13 @@ struct boardType{
     int N;
     int minCellValue;
     int maxCellValue;
+
     vector<vector<int>> board;
     vector<vector<int>> fixed;
 
-    vector<int> colObjs;
-    vector<int> rowObjs;
+    vector<int> rowObjectives;
+    vector<int> colObjectives;
+    int totalObjective;
 
     void printBoard();
 

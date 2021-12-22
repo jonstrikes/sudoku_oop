@@ -44,8 +44,11 @@ boardType readFile(const string& fileDir){
     board.board = grid;
     board.fixed = fixed;
 
-    board.colObjs = colObjs;
-    board.rowObjs = rowObjs;
+    board.colObjectives = colObjs;
+    board.rowObjectives = rowObjs;
+
+    //initialise total objective to some non zero value
+    board.totalObjective = N * 2 * N;
 
     return board;
 }

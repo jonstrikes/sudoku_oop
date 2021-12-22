@@ -20,13 +20,11 @@
 #include "SudokuIO.h"
 
 void fillGrid(boardType *board);
-void undoMove(boardType *board, int *rowObjectives, int *colObjectives,
-              std::vector<std::tuple<int, int, int>> *changedCells,
+void undoMove(boardType *board, std::vector<std::tuple<int, int, int>> *changedCells,
               std::map<int, int> *rowPrevObjs, std::map<int, int> *colPrevObjs);
-int recalcObj(boardType *board, int *rowObjectives, int *colObjectives,
-              std::vector<std::tuple<int, int, int>> *changedCells,
+int recalcObj(boardType *board, std::vector<std::tuple<int, int, int>> *changedCells,
               std::map<int, int> *rowPrevObjs, std::map<int, int> *colPrevObjs);
-int calcObj(boardType *board, int *rowObjectives, int *colObjectives);
+int calcObj(boardType *board);
 
 
 #endif //SUDOKU_OOP_SOLVER_H
