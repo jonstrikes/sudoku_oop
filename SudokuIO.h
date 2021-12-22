@@ -8,6 +8,7 @@
 #include <cerrno>
 #include "board.h"
 
-boardType readFile(std::string fileDir);
+
+boardType readFile(const std::string& fileDir);
 
 #endif //SUDOKU_OOP_SUDOKUIO_H

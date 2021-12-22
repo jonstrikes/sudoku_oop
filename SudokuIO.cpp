@@ -3,7 +3,7 @@
 using std::string;
 using std::cout;
 
-boardType readFile(string fileDir){
+boardType readFile(const string& fileDir){
     std::ifstream inFile;
     inFile.open(fileDir);
 
@@ -18,12 +18,12 @@ boardType readFile(string fileDir){
     maxCellValue = minCellValue + N;
 
     //initialise grid and fixed
-    int **grid = new int* [N];
-    int **fixed = new int* [N];
-    for(int i=0; i<N; i++){
-        grid[i] = new int[N];
-        fixed[i] = new int[N];
-    }
+    auto grid = vector<vector<int>> (N, vector<int>(N));
+    auto fixed = vector<vector<int>> (N, vector<int>(N));
+
+    //initialise column and row objective containers
+    auto colObjs = vector<int>(N);
+    auto rowObjs = vector<int>(N);
 
     //all benchmark files contain one puzzle
     for (int row = 0; row < N; row++) {
@@ -40,8 +40,12 @@ boardType readFile(string fileDir){
     board.N = N;
     board.minCellValue = minCellValue;
     board.maxCellValue = maxCellValue;
+
     board.board = grid;
     board.fixed = fixed;
+
+    board.colObjs = colObjs;
+    board.rowObjs = rowObjs;
 
     return board;
 }
