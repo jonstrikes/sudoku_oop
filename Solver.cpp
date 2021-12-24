@@ -97,7 +97,7 @@ int recalcObj(boardType *board) {
             if (std::find(rowValues.begin(), rowValues.end(), possibleValue) == rowValues.end())
                 rowCost++;
         }
-        std::cout << "row " << rc << " prev cost " << rowData.second << " cost " << rowCost << std::endl;
+        //std::cout << "row " << rc << " prev cost " << rowData.second << " cost " << rowCost << std::endl;
 
         change += rowCost - board->rowObjectives[rc];
         board->rowObjectives[rc] = rowCost;
@@ -118,7 +118,7 @@ int recalcObj(boardType *board) {
             if (std::find(colValues.begin(), colValues.end(), possibleValue) == colValues.end())
                 colCost++;
         }
-        std::cout << "col " << cc << " prev cost " << colData.second << " cost " << colCost << std::endl;
+        //std::cout << "col " << cc << " prev cost " << colData.second << " cost " << colCost << std::endl;
 
         change += colCost - board->colObjectives[cc];
         board->colObjectives[cc] = colCost;

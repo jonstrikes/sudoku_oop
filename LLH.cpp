@@ -20,7 +20,7 @@ void neighbourhoodSwap(boardType *board) {
     moveData.emplace_back(r2, c2, board->board[r2][c2]);
     board->rememberChange(moveData);
 
-    std::cout<<"SWAPPING CELLS " << r1 << "," << c1 << " with " << r2 << "," << c2 << std::endl;
+    //std::cout<<"SWAPPING CELLS " << r1 << "," << c1 << " with " << r2 << "," << c2 << std::endl;
 
     tmp = board->board[r1][c1];
     board->board[r1][c1] = board->board[r2][c2];
@@ -28,3 +28,16 @@ void neighbourhoodSwap(boardType *board) {
 
     //OBJ VALUE ISNT RECALCULATED IMPLICITLY AS IT IS AN EXPENSIVE OPERATION
 }
+
+//THINK THOROUHGLY ABOUT THE ROLE OF FIXED CELLS IN THESE LLH
+
+//insert would take a cell, change it's position in a sub block and then shift the non-fixed cell values in-between
+// non fixed {4, 6, 7, 8} inserting 8 to 4's location would yield {8, 4, 6, 7}
+
+//invert would take two cells that dictate the range of changed cells and inverse their order.
+// non fixed {4, 6, 7, 8} inverting cells from 4 to 8  would yield {8, 7, 6, 4}
+//THIS IS SIMILAR TO CPOEx, make it so that invert supports "skipping" fixed cells.
+
+//Centered Point Oriented Exchange (CPOEx)
+// randomly selects a target cell in a subsquare, pairs cells to its left with cells to it's right until it bumps into a fixed cell
+// {3, 4, 5, 6, 7, 8, 9} if 3 is fixed and centered point is 6, the resulting exchange is {3, 8, 7, 6, 5, 4, 9} (9 unchanged)

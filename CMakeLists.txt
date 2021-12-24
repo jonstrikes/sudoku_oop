@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.17)
 project(sudoku_oop)
 
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_FLAGS "-s -O3")
 
 set(PROJECT_HEADERS
         Solver.h
