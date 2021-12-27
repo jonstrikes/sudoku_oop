@@ -29,7 +29,7 @@ private:
     std::deque<HistoryEntry> history;
 public:
     //add move to back of deque
-    void recordChange(const std::vector<MoveData>& changedCells, std::vector<int> &rowObjectives, std::vector<int> &colObjectives);
+    void recordChange(const std::vector<MoveData> &changedCells, std::vector<int> &rowObjectives, std::vector<int> &colObjectives);
     //remove last move
     HistoryEntry popChange();
     //check last record

@@ -5,7 +5,7 @@
 
 struct MoveData{
 private:
-    std::tuple<int, int, int> move;
+    std::array<int, 3> move{};
 public:
     MoveData(int row, int col, int value);
     int getRow();

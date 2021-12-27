@@ -2,11 +2,11 @@
 
 
 MoveData::MoveData(int row, int col, int value) {
-    move = std::make_tuple(row, col, value);
+    move = {row, col, value};
 }
 
-int MoveData::getRow() { return std::get<0>(this->move); }
+int MoveData::getRow() { return this->move[0]; }
 
-int MoveData::getCol() { return std::get<1>(this->move); }
+int MoveData::getCol() { return this->move[1]; }
 
-int MoveData::getVal() { return std::get<2>(this->move); }
+int MoveData::getVal() { return this->move[2]; }
