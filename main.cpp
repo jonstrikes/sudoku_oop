@@ -5,7 +5,7 @@
 #include "Selector.h"
 
 int main() {
-    std::string order3 = "benchmark_puzzles/benchmarks3x3/40/puzzle19.txt";
+    std::string order3 = "benchmark_puzzles/benchmarks4x4/40/puzzle19.txt";
     std::string order4 = "benchmark_puzzles/benchmarks4x4/40/puzzle6.txt";
     std::string order5 = "benchmark_puzzles/benchmarks5x5/80/puzzle13.txt";
 
@@ -16,9 +16,11 @@ int main() {
     fillGrid(&board);
     board.printBoard();
 
+
+
     int obj = calcObj(&board);
     while(obj != 0){
-        neighbourhoodSwap(&board);
+        neighbourhoodInsert(board);
         int objChange = recalcObj(&board);
 
         if(objChange > 0) {

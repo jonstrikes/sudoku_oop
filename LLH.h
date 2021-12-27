@@ -4,6 +4,8 @@
 #include "board.h"
 #include <vector>
 #include <tuple>
+#include <cmath>
+
 void neighbourhoodSwap(boardType *board);
 void neighbourhoodInsert(boardType &board);
 
