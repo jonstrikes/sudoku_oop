@@ -8,5 +8,6 @@
 
 void neighbourhoodSwap(boardType *board);
 void neighbourhoodInsert(boardType &board);
+void neighbourhoodInvert(boardType &board);
 
 #endif //SUDOKU_OOP_LLHMANAGER_H

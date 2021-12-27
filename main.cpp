@@ -5,7 +5,7 @@
 #include "Selector.h"
 
 int main() {
-    std::string order3 = "benchmark_puzzles/benchmarks4x4/40/puzzle19.txt";
+    std::string order3 = "benchmark_puzzles/benchmarks3x3/40/puzzle19.txt";
     std::string order4 = "benchmark_puzzles/benchmarks4x4/40/puzzle6.txt";
     std::string order5 = "benchmark_puzzles/benchmarks5x5/80/puzzle13.txt";
 
@@ -20,7 +20,7 @@ int main() {
 
     int obj = calcObj(&board);
     while(obj != 0){
-        neighbourhoodInsert(board);
+        neighbourhoodInvert(board);
         int objChange = recalcObj(&board);
 
         if(objChange > 0) {
@@ -42,7 +42,7 @@ int main() {
 //    std::cout<<std::endl<< calcObj(&board) <<std::endl;
 //    board.printBoard();
 //    std::cout<<std::endl<< "NOW INSERTING" <<std::endl;
-//    neighbourhoodInsert(board);
+//    neighbourhoodInvert(board);
 //
 //    int gap = recalcObj(&board);
 //    std::cout<<std::endl<< "CHANGE CALCULATED: " << gap << " CURRENT OBJECTIVE VALUE: " << calcObj(&board) <<std::endl;
