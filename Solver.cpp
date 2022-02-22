@@ -75,6 +75,9 @@ int calcObj(boardType *board) {
 // recalculates objective function for only the rows and columns changed
 // returns the resulting change in objective value
 int recalcObj(boardType *board) {
+    //THIS CHECK MIGHT MAKE DEBUGGING NASTY (could trust the caller to perform this check??)
+    if(board->moveHistory.empty())
+        return 0;
 
     vector<int> possibleValues;
     int value = board->minCellValue;

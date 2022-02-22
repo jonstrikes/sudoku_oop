@@ -28,6 +28,7 @@ class MoveHistory{
 private:
     std::deque<HistoryEntry> history;
 public:
+    bool empty();
     //add move to back of deque
     void recordChange(const std::vector<MoveData> &changedCells, std::vector<int> &rowObjectives, std::vector<int> &colObjectives);
     //remove last move

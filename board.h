@@ -28,6 +28,8 @@ struct boardType{
 
     void printBoard();
 
+    //checks if there are moves recorded in history
+    bool hasChange();
     //records a change from a sequence of moves
     void rememberChange(std::vector<MoveData> &changedCells);
     //restores board and objective values to last recorded state, discarding respective entry from history

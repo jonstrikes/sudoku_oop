@@ -31,6 +31,10 @@ string boardType::cellToString(int value){
     return cell;
 }
 
+bool boardType::hasChange(){
+    return !this->moveHistory.empty();
+}
+
 //records a move
 void boardType::rememberChange(std::vector<MoveData> &changedCells){
     this->moveHistory.recordChange(changedCells, rowObjectives, colObjectives);
@@ -38,6 +42,11 @@ void boardType::rememberChange(std::vector<MoveData> &changedCells){
 
 //restores board and objective values to last recorded state, discarding respective entry from history
 void boardType::undoChange(){
+    //THIS CHECK MIGHT MAKE DEBUGGING NASTY
+    if(!this->hasChange()){
+        return;
+    }
+
     HistoryEntry lastChange = moveHistory.popChange();
 
     //reset cells that were changed
@@ -60,6 +69,9 @@ void boardType::undoChange(){
 
 //discards all records of previous changes from history
 void boardType::acceptChange(){
+    if(!this->hasChange()){
+        return;
+    }
     moveHistory.popChange();
 }
 

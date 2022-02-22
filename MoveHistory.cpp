@@ -22,3 +22,7 @@ HistoryEntry MoveHistory::popChange(){
 HistoryEntry MoveHistory::peekLast() {
     return history.back();
 }
+
+bool MoveHistory::empty() {
+    return history.empty();
+}

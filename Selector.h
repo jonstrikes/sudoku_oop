@@ -20,7 +20,10 @@ enum selectionMethod{
 
 enum LLH{
     NEIGHBOURHOOD_SWAP = 0,
-    someOtherLLH = 1,
+    NEIGHBOURHOOD_INSERT = 1,
+    NEIGHBOURHOOD_INVERT = 2,
+    NEIGHBOURHOOD_CPOExchange = 3,
+
     LAST_LLH = 2,
 };
 

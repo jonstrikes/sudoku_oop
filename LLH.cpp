@@ -1,30 +1,30 @@
 #include "LLH.h"
 
-void neighbourhoodSwap(boardType *board) {
+void neighbourhoodSwap(boardType &board) {
     //CAUTION: CURRENT FILL FUNCTION ALLOWS BLOCKS WITH A SINGLE UNFIXED VALUE, WILL RESULT IN INFINITE LOOP
     int r1, c1, r2, c2, tmp;
     vector<MoveData> moveData;
 
     do {
-        r1 = rand() % board->N;
-        c1 = rand() % board->N;
-    } while (board->fixed[r1][c1]);
+        r1 = rand() % board.N;
+        c1 = rand() % board.N;
+    } while (board.fixed[r1][c1]);
 
     do {
-        r2 = rand() % board->n + r1 / board->n * board->n;
-        c2 = rand() % board->n + c1 / board->n * board->n;
-    } while (board->fixed[r2][c2] || (r1 == r2 && c1 == c2));
+        r2 = rand() % board.n + r1 / board.n * board.n;
+        c2 = rand() % board.n + c1 / board.n * board.n;
+    } while (board.fixed[r2][c2] || (r1 == r2 && c1 == c2));
 
 
-    moveData.emplace_back(r1, c1, board->board[r1][c1]);
-    moveData.emplace_back(r2, c2, board->board[r2][c2]);
-    board->rememberChange(moveData);
+    moveData.emplace_back(r1, c1, board.board[r1][c1]);
+    moveData.emplace_back(r2, c2, board.board[r2][c2]);
+    board.rememberChange(moveData);
 
     //std::cout<<"SWAPPING CELLS " << r1 << "," << c1 << " with " << r2 << "," << c2 << std::endl;
 
-    tmp = board->board[r1][c1];
-    board->board[r1][c1] = board->board[r2][c2];
-    board->board[r2][c2] = tmp;
+    tmp = board.board[r1][c1];
+    board.board[r1][c1] = board.board[r2][c2];
+    board.board[r2][c2] = tmp;
 
     //OBJ VALUE ISNT RECALCULATED IMPLICITLY AS IT IS AN EXPENSIVE OPERATION
 }
@@ -123,6 +123,14 @@ std::pair<int, int> getNeighbourCoords(bool rightNeighbour, int r, int c, int n)
     return {rNext, cNext};
 }
 
+bool areInSameBlock(int r1, int c1, int r2, int c2, int n){
+    return (r1/n == r2/n) && (c1/n == c2/n);
+}
+
+bool isWithinBounds(int r, int c, int N){
+    return (r >= 0 && r < N) && (c >= 0 && c < N);
+}
+
 void neighbourhoodInvert(boardType &board){
     int r1, c1, r2, c2;
     vector<MoveData> moveData;
@@ -185,3 +193,47 @@ void neighbourhoodInvert(boardType &board){
 //Centered Point Oriented Exchange (CPOEx)
 // randomly selects a target cell in a subsquare, pairs cells to its left with cells to it's right until it bumps into a fixed cell
 // {3, 4, 5, 6, 7, 8, 9} if 3 is fixed and centered point is 6, the resulting exchange is {3, 8, 7, 6, 5, 4, 9} (9 unchanged)
+
+void neighbourhoodCPOEx(boardType &board) {
+    int r, c;
+    vector<MoveData> moveData;
+
+    do {
+        r = rand() % board.N;
+        c = rand() % board.N;
+    } while (board.fixed[r][c]);
+
+    std::cout << "start point: " << r << ":" << c << std::endl;
+
+    std::pair<int, int>left = getNeighbourCoords(false, r, c, board.n);
+    std::pair<int, int>right = getNeighbourCoords(true, r, c, board.n);
+
+    while(true){
+        if(!isWithinBounds(left.first, left.second, board.N) || !isWithinBounds(right.first, right.second, board.N))
+            break;
+
+        if(!areInSameBlock(left.first, left.second, right.first, right.second, board.n))
+            break;
+
+        if(board.fixed[left.first][left.second] || board.fixed[right.first][right.second])
+            break;
+
+        //std::cout << "neighbours left " << left.first << ":" << left.second << " right " << right.first << ":" << right.second <<  std::endl;
+
+        moveData.emplace_back(left.first, left.second, board.board[left.first][left.second]);
+        moveData.emplace_back(right.first, right.second, board.board[right.first][right.second]);
+
+        //swap neighbours
+        int temp = board.board[left.first][left.second];
+        board.board[left.first][left.second] = board.board[right.first][right.second];
+        board.board[right.first][right.second] = temp;
+
+        //get further neighbours
+        left = getNeighbourCoords(false, left.first, left.second, board.n);
+        right = getNeighbourCoords(true, right.first, right.second, board.n);
+    }
+
+    if(!moveData.empty()) {
+        board.rememberChange(moveData);
+    }
+}
