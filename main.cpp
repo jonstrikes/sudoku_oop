@@ -1,8 +1,7 @@
 #include <string>
 #include "SudokuIO.h"
 #include "Solver.h"
-#include "LLH.h"
-#include "Selector.h"
+#include "operators/operators.h"
 
 int main() {
     std::string order3 = "benchmark_puzzles/benchmarks3x3/80/puzzle3.txt";
@@ -18,25 +17,25 @@ int main() {
 
     int iterations = 0;
 
-//    int obj = calcObj(&board);
-//    while(obj != 0){
-//        neighbourhoodInsert(board);
-//        int objChange = recalcObj(&board);
-//
-//        if(objChange > 0) {
-//            board.undoChange();
-//        }
-//        else {
-//            obj += objChange;
-//            board.acceptChange();
-//        }
-//
-//        iterations++;
-//        std::cout << std::endl << objChange << "estimated obj is " << obj <<  " AND ACTUAL OBJECTIVE IS " <<  calcObj(&board) << std::endl;
-//    }
-//
-//    board.printBoard();
-//    std::cout << std::endl << calcObj(&board) << " Num of iteration: " << iterations << std::endl;
+    int obj = calcObj(&board);
+    while(obj != 0){
+        cpoExchange(board);
+        int objChange = recalcObj(&board);
+
+        if(objChange > 0) {
+            board.undoChange();
+        }
+        else {
+            obj += objChange;
+            board.acceptChange();
+        }
+
+        iterations++;
+        std::cout << std::endl << objChange << "estimated obj is " << obj <<  " AND ACTUAL OBJECTIVE IS " <<  calcObj(&board) << std::endl;
+    }
+
+    board.printBoard();
+    std::cout << std::endl << calcObj(&board) << " Num of iteration: " << iterations << std::endl;
 
 
 
@@ -56,13 +55,14 @@ int main() {
 
 
     int change;
-    auto selector = Selector(selectionMethod(SR));
+    //auto selector = Selector(board, selectionMethod(SR));
     //test one run
 
     //selection
-    change = selector.select();
+    //change = selector.select();
 
     // move acceptance
+     //acceptor.process(change);
 
     return 0;
 }

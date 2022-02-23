@@ -7,7 +7,13 @@ set(CMAKE_CXX_FLAGS "-s -O3")
 set(PROJECT_HEADERS
         Solver.h
         SudokuIO.h
-        LLH.h
+        #utils
+        utils/boardUtils.h
+        #operators
+        operators/operators.h
+        #selectors
+        selectors/simpleRandom.h
+
         MoveHistory.h
         MoveData.h
         board.h)
@@ -15,7 +21,16 @@ set(PROJECT_HEADERS
 set(PROJECT_SOURCES
         main.cpp
         SudokuIO.cpp
-        LLH.cpp
+        #utils
+        utils/boardUtils.cpp
+        #operators
+        operators/swap.cpp
+        operators/insert.cpp
+        operators/invert.cpp
+        operators/cpoExchange.cpp
+        #selectors
+        selectors/simpleRandom.cpp
+
         MoveHistory.cpp
         MoveData.cpp
         Solver.cpp

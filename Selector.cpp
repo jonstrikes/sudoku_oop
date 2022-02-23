@@ -1,8 +1,9 @@
 #include "Selector.h"
 
-Selector::Selector(enum selectionMethod method) {
-    hasImprovedSolution = false;
-    selectionMethod = method;
+Selector::Selector(boardType b, enum selectionMethod m) {
+    board = b;
+    selectionMethod = m;
+
     //initialise permutation
     for (int i = 0; i < LAST_LLH; i++) permutation.push_back(static_cast<LLH>(i));
     std::random_shuffle(permutation.begin(), permutation.end());
@@ -38,10 +39,11 @@ int Selector::randomDescent() {
     //randomly select low level heuristic
     LLH currentLLH = static_cast<LLH>(rand() % LAST_LLH);
     //reapply if solution is better
-    int totalChange = 0;
+    int totalChange = 0, change = 0;
     do {
-        totalChange += applyLLH(currentLLH);
-    } while (hasImprovedSolution);
+        change = applyLLH(currentLLH);
+        totalChange += change;
+    } while (change <= 0);
 
     //how do I undo moves?
 
@@ -56,10 +58,12 @@ int Selector::randomPermutation() {
 }
 
 int Selector::randomPermutationDescent() {
-    int totalChange = 0;
+    int totalChange = 0, change = 0;
     do {
-        totalChange += applyLLH(permutation[currentLLHid]);
-    } while (hasImprovedSolution);
+        change = applyLLH(permutation[currentLLHid]);
+        totalChange += change;
+    } while (change <= 0);
+
     //should undo last move if it sucks??
     currentLLHid++;
     return totalChange;
@@ -79,13 +83,15 @@ int Selector::applyLLH(LLH selectedHeuristic) {
         case NEIGHBOURHOOD_SWAP:
             //neighbourhoodSwap();
             break;
-        case someOtherLLH:
+        case NEIGHBOURHOOD_INSERT:
             //someOtherLLH();
+            break;
+        case NEIGHBOURHOOD_CPOExchange:
+            break;
+        case NEIGHBOURHOOD_INVERT:
             break;
         default:
             break;
     }
-    int change = recalcObj();
-    hasImprovedSolution = change < 0;
-    return change;
+    return 0;//change;
 }

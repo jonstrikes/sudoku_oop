@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include "Solver.h"
+#include "board.h"
 
 using std::string;
 using std::vector;
@@ -29,12 +30,12 @@ enum LLH{
 
 class Selector{
 public:
-    explicit Selector(enum selectionMethod method);
+    explicit Selector(boardType board, selectionMethod selectionMethod);
     int select();
 private:
+    boardType board;
     selectionMethod selectionMethod;
     vector<LLH> permutation;
-    bool hasImprovedSolution;
     int currentLLHid;
 
     int simpleRandom();
