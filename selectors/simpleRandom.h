@@ -2,16 +2,13 @@
 #define SUDOKU_OOP_SIMPLERANDOM_H
 
 #include "../models/selector.h"
+#include <random>
 
 class SimpleRandom : public Selector
 {
 public:
-    SimpleRandom();
-
-    void select() override
-    {
-        //do stuff
-    }
+    explicit SimpleRandom();
+    void select(boardType &board) override;
 };
 
 #endif //SUDOKU_OOP_SIMPLERANDOM_H

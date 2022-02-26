@@ -2,6 +2,8 @@
 
 void swap(boardType &board) {
     //CAUTION: CURRENT FILL FUNCTION ALLOWS BLOCKS WITH A SINGLE UNFIXED VALUE, WILL RESULT IN INFINITE LOOP
+    std::cout << "Swap called" << std::endl;
+
     int r1, c1, r2, c2, tmp;
     vector<MoveData> moveData;
 

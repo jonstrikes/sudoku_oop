@@ -4,6 +4,8 @@ void insert(boardType &board) {
     int rSource, cSource, rDest, cDest;
     vector<MoveData> moveData;
 
+    std::cout << "Insert called" << std::endl;
+
     do {
         rSource = rand() % board.N;
         cSource = rand() % board.N;

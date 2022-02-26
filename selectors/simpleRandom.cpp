@@ -1,5 +1,9 @@
 #include "simpleRandom.h"
 
-SimpleRandom::SimpleRandom() {
+SimpleRandom::SimpleRandom() : Selector(){
+}
 
+void SimpleRandom::select(boardType &board) {
+    int randomOperatorID = std::rand() % operators.size();
+    (*operators[randomOperatorID])(board);
 }

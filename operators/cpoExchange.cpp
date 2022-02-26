@@ -2,6 +2,8 @@
 #include "../utils/boardUtils.h"
 
 void cpoExchange(boardType &board) {
+    std::cout << "CPOExchange called" << std::endl;
+
     int r, c;
     vector<MoveData> moveData;
 
@@ -10,7 +12,7 @@ void cpoExchange(boardType &board) {
         c = rand() % board.N;
     } while (board.fixed[r][c]);
 
-    std::cout << "start point: " << r << ":" << c << std::endl;
+    //std::cout << "start point: " << r << ":" << c << std::endl;
 
     std::pair<int, int>left = getNeighbourCoords(false, r, c, board.n);
     std::pair<int, int>right = getNeighbourCoords(true, r, c, board.n);

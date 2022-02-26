@@ -1,7 +1,9 @@
 #include <string>
 #include "SudokuIO.h"
 #include "Solver.h"
-#include "operators/operators.h"
+#include "models/selector.h"
+#include "acceptors/improveOrEqual.h"
+#include "selectors/simpleRandom.h"
 
 int main() {
     std::string order3 = "benchmark_puzzles/benchmarks3x3/80/puzzle3.txt";
@@ -15,27 +17,27 @@ int main() {
     fillGrid(&board);
     board.printBoard();
 
-    int iterations = 0;
-
-    int obj = calcObj(&board);
-    while(obj != 0){
-        cpoExchange(board);
-        int objChange = recalcObj(&board);
-
-        if(objChange > 0) {
-            board.undoChange();
-        }
-        else {
-            obj += objChange;
-            board.acceptChange();
-        }
-
-        iterations++;
-        std::cout << std::endl << objChange << "estimated obj is " << obj <<  " AND ACTUAL OBJECTIVE IS " <<  calcObj(&board) << std::endl;
-    }
-
-    board.printBoard();
-    std::cout << std::endl << calcObj(&board) << " Num of iteration: " << iterations << std::endl;
+//    int iterations = 0;
+//
+//    int obj = calcObj(&board);
+//    while(obj != 0){
+//        cpoExchange(board);
+//        int objChange = recalcObj(&board);
+//
+//        if(objChange > 0) {
+//            board.undoChange();
+//        }
+//        else {
+//            obj += objChange;
+//            board.acceptChange();
+//        }
+//
+//        iterations++;
+//        std::cout << std::endl << objChange << "estimated obj is " << obj <<  " AND ACTUAL OBJECTIVE IS " <<  calcObj(&board) << std::endl;
+//    }
+//
+//    board.printBoard();
+//    std::cout << std::endl << calcObj(&board) << " Num of iteration: " << iterations << std::endl;
 
 
 
@@ -52,17 +54,33 @@ int main() {
 //    std::cout<<std::endl<< "UNDONE MOVE:" << " CURRENT OBJECTIVE VALUE: " << calcObj(&board) <<  std::endl;
 //    board.printBoard();
 
+//    int gap = recalcObj(&board);
+//    std::cout<<std::endl<< "CHANGE CALCULATED: " << gap << " CURRENT OBJECTIVE VALUE: " << calcObj(&board) <<std::endl;
 
+//    std::cout<<std::endl<< calcObj(&board) <<std::endl;
+//    board.printBoard();
 
-    int change;
-    //auto selector = Selector(board, selectionMethod(SR));
     //test one run
+    SimpleRandom selector;
+    ImproveOrEqual acceptor(board);
 
-    //selection
-    //change = selector.select();
+    //move selection
+    selector.select(board);
+    board.printBoard();
 
-    // move acceptance
-     //acceptor.process(change);
+    //move acceptance
+    acceptor.process(board);
+    board.printBoard();
+
+    while(!acceptor.isSolved()){ // isSolved or timout
+        //move selection
+        selector.select(board);
+        //move acceptance
+        acceptor.process(board);
+    }
+
+    board.printBoard();
+
 
     return 0;
 }

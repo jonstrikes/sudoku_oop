@@ -12,7 +12,11 @@ set(PROJECT_HEADERS
         #operators
         operators/operators.h
         #selectors
+        models/selector.h
         selectors/simpleRandom.h
+        #acceptors
+        models/acceptor.h
+        acceptors/improveOrEqual.h
 
         MoveHistory.h
         MoveData.h
@@ -29,7 +33,12 @@ set(PROJECT_SOURCES
         operators/invert.cpp
         operators/cpoExchange.cpp
         #selectors
+        models/selector.cpp
         selectors/simpleRandom.cpp
+
+        #acceptors
+        models/acceptor.cpp
+        acceptors/improveOrEqual.cpp
 
         MoveHistory.cpp
         MoveData.cpp
