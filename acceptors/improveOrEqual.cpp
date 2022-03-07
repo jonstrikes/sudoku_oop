@@ -3,7 +3,7 @@
 ImproveOrEqual::ImproveOrEqual(boardType board) : Acceptor(board){
 }
 
-void ImproveOrEqual::process(boardType &board) {
+int ImproveOrEqual::process(boardType &board) {
     int objChange = recalcObj(&board);
 
     if(objChange > 0) {
@@ -14,7 +14,10 @@ void ImproveOrEqual::process(boardType &board) {
         objective += objChange;
         board.acceptChange();
     }
-    std::cout << ". Total objective: " << objective << std::endl << std::endl;
 
-    std::cout << "Actual objective " << calcObj(&board) << std::endl;
+    std::cout << "\nAfter obj change of: " << objChange << std::endl;
+    std::cout << "Total objective: " << objective << std::endl;
+    std::cout << "Actual objective " << calcObj(&board) << std::endl << std::endl;
+
+    return objChange;
 }

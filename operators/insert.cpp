@@ -4,7 +4,7 @@ void insert(boardType &board) {
     int rSource, cSource, rDest, cDest;
     vector<MoveData> moveData;
 
-    std::cout << "Insert called" << std::endl;
+//    std::cout << "Insert called" << std::endl;
 
     do {
         rSource = rand() % board.N;
@@ -50,9 +50,8 @@ void insert(boardType &board) {
         }
 
         prev = board.board[r][c];
-        board.board[r][c] = swapVal;
-
         moveData.emplace_back(r, c, prev);
+        board.board[r][c] = swapVal;
 
         if(r == rDest && c == cDest) break;
 

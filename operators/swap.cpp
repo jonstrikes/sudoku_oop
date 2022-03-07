@@ -2,7 +2,7 @@
 
 void swap(boardType &board) {
     //CAUTION: CURRENT FILL FUNCTION ALLOWS BLOCKS WITH A SINGLE UNFIXED VALUE, WILL RESULT IN INFINITE LOOP
-    std::cout << "Swap called" << std::endl;
+    //std::cout << "Swap called" << std::endl;
 
     int r1, c1, r2, c2, tmp;
     vector<MoveData> moveData;
@@ -27,6 +27,4 @@ void swap(boardType &board) {
     tmp = board.board[r1][c1];
     board.board[r1][c1] = board.board[r2][c2];
     board.board[r2][c2] = tmp;
-
-    //OBJ VALUE ISNT RECALCULATED IMPLICITLY AS IT IS AN EXPENSIVE OPERATION
 }

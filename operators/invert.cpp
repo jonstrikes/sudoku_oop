@@ -5,7 +5,7 @@ void invert(boardType &board){
     int r1, c1, r2, c2;
     vector<MoveData> moveData;
 
-    std::cout << "Invert called" << std::endl;
+//    std::cout << "Invert called" << std::endl;
 
     do {
         r1 = rand() % board.N;
@@ -59,5 +59,6 @@ void invert(boardType &board){
         rRight = coordinates.first;
         cRight = coordinates.second;
     }
+
     board.rememberChange(moveData);
 }

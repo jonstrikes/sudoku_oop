@@ -24,6 +24,8 @@ void undoMove(boardType *board, std::vector<std::tuple<int, int, int>> *changedC
               std::map<int, int> *rowPrevObjs, std::map<int, int> *colPrevObjs);
 int recalcObj(boardType *board);
 int calcObj(boardType *board);
+int calcObjInitial(boardType *board);
 
+int peekObjChange(boardType *board);
 
 #endif //SUDOKU_OOP_SOLVER_H

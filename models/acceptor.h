@@ -9,10 +9,10 @@ class Acceptor
 protected:
     int objective;
 public:
-    Acceptor(boardType board);
+    explicit Acceptor(boardType &board);
     virtual ~Acceptor() {}
-    virtual void process(boardType &board) = 0;
-    bool isSolved();
+    virtual int process(boardType &board) = 0;
+    [[nodiscard]] bool isSolved() const;
 };
 
 #endif //SUDOKU_OOP_ACCEPTOR_H

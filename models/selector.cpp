@@ -1,6 +1,6 @@
 #include "selector.h"
 
-Selector::Selector() {
+Selector::Selector(){
     operators.insert(operators.end(),{
             reinterpret_cast<void (*)(boardType&)>(&swap),
             reinterpret_cast<void (*)(boardType&)>(&insert),

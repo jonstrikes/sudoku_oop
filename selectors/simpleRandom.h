@@ -9,6 +9,7 @@ class SimpleRandom : public Selector
 public:
     explicit SimpleRandom();
     void select(boardType &board) override;
+    void updateState(int change) override;
 };
 
 #endif //SUDOKU_OOP_SIMPLERANDOM_H

@@ -1,9 +1,9 @@
 #include "acceptor.h"
 
-Acceptor::Acceptor(boardType board) {
+Acceptor::Acceptor(boardType &board) {
     objective = calcObj(&board);
 }
 
-bool Acceptor::isSolved() {
+bool Acceptor::isSolved() const {
     return objective == 0;
 }

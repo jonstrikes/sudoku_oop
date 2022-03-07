@@ -14,6 +14,11 @@ set(PROJECT_HEADERS
         #selectors
         models/selector.h
         selectors/simpleRandom.h
+        selectors/randomDescent.h
+        selectors/randomPermutation.h
+        selectors/randomPermutationDescent.h
+        selectors/greedy.h
+
         #acceptors
         models/acceptor.h
         acceptors/improveOrEqual.h
@@ -35,6 +40,10 @@ set(PROJECT_SOURCES
         #selectors
         models/selector.cpp
         selectors/simpleRandom.cpp
+        selectors/randomDescent.cpp
+        selectors/randomPermutation.cpp
+        selectors/randomPermutationDescent.cpp
+        selectors/greedy.cpp
 
         #acceptors
         models/acceptor.cpp

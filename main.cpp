@@ -2,8 +2,14 @@
 #include "SudokuIO.h"
 #include "Solver.h"
 #include "models/selector.h"
+
 #include "acceptors/improveOrEqual.h"
+
 #include "selectors/simpleRandom.h"
+#include "selectors/randomDescent.h"
+#include "selectors/randomPermutation.h"
+#include "selectors/randomPermutationDescent.h"
+#include "selectors/greedy.h"
 
 int main() {
     std::string order3 = "benchmark_puzzles/benchmarks3x3/80/puzzle3.txt";
@@ -60,27 +66,48 @@ int main() {
 //    std::cout<<std::endl<< calcObj(&board) <<std::endl;
 //    board.printBoard();
 
+    //calculate initial objective
+    calcObjInitial(&board);
+
     //test one run
-    SimpleRandom selector;
+    Greedy selector;
     ImproveOrEqual acceptor(board);
-
-    //move selection
-    selector.select(board);
-    board.printBoard();
-
-    //move acceptance
-    acceptor.process(board);
-    board.printBoard();
 
     while(!acceptor.isSolved()){ // isSolved or timout
         //move selection
         selector.select(board);
         //move acceptance
-        acceptor.process(board);
+        int change = acceptor.process(board);
+
+        selector.updateState(change);
     }
 
     board.printBoard();
 
+
+    //check rows and cols of solution
+    for(const std::vector<int>& row : board.board){
+        std::vector<bool> encountered(board.N);
+
+        for(int val : row){
+            if(encountered[val]) {std::cout<< "! Duplicate row value found: " << val << std::endl;}
+            encountered[val] = true;
+        }
+
+        //reset work vector
+        encountered.assign(encountered.size(), false);
+    }
+
+    for(int i=0; i<board.N; i++){
+        std::vector<bool> encountered(board.N);
+        for(int j=0; j<board.N; j++){
+            if(encountered[board.board[j][i]]) {std::cout<< "! Duplicate col value found: " << board.board[j][i] << std::endl;}
+            encountered[board.board[j][i]] = true;
+        }
+
+        //reset work vector
+        encountered.assign(encountered.size(), false);
+    }
 
     return 0;
 }

@@ -37,7 +37,7 @@ bool boardType::hasChange(){
 
 //records a move
 void boardType::rememberChange(std::vector<MoveData> &changedCells){
-    this->moveHistory.recordChange(changedCells, rowObjectives, colObjectives);
+    moveHistory.recordChange(changedCells, rowObjectives, colObjectives);
 }
 
 //restores board and objective values to last recorded state, discarding respective entry from history
@@ -54,16 +54,16 @@ void boardType::undoChange(){
         board[cellChanged.getRow()][cellChanged.getCol()] = cellChanged.getVal();
     }
 
-    //reset objective scores of rows to previous move
+    //reset objective scores of rows to previous record
     for (auto rowChange : lastChange.changedRowObjectives) {
         //a pair is row, previous row score
         rowObjectives[rowChange.first] = rowChange.second;
     }
 
-    //reset objective scores of rows to previous move
+    //reset objective scores of cols to previous record
     for (auto colChange : lastChange.changedColObjectives) {
-        //a pair is row, previous row score
-        rowObjectives[colChange.first] = colChange.second;
+        //a pair is col, previous col score
+        colObjectives[colChange.first] = colChange.second;
     }
 }
 
@@ -72,6 +72,8 @@ void boardType::acceptChange(){
     if(!this->hasChange()){
         return;
     }
-    moveHistory.popChange();
+    while(this->hasChange()){
+        moveHistory.popChange();
+    }
 }
 

@@ -7,7 +7,7 @@ class ImproveOrEqual : public Acceptor
 {
 public:
     explicit ImproveOrEqual(boardType board);
-    void process(boardType &board) override;
+    int process(boardType &board) override;
 };
 
 #endif //SUDOKU_OOP_IMPROVEOREQUAL_H

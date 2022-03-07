@@ -2,7 +2,7 @@
 #include "../utils/boardUtils.h"
 
 void cpoExchange(boardType &board) {
-    std::cout << "CPOExchange called" << std::endl;
+    //std::cout << "CPOExchange called" << std::endl;
 
     int r, c;
     vector<MoveData> moveData;
@@ -42,8 +42,6 @@ void cpoExchange(boardType &board) {
         right = getNeighbourCoords(true, right.first, right.second, board.n);
     }
 
-    if(!moveData.empty()) {
-        board.rememberChange(moveData);
-    }
+    board.rememberChange(moveData);
 }
 

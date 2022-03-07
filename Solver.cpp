@@ -63,8 +63,8 @@ int calcObj(boardType *board) {
             if (std::find(colValues.begin(), colValues.end(), possibleValue) == colValues.end())
                 colCost++;
         }
-        board->rowObjectives[i] = rowCost;
-        board->colObjectives[i] = colCost;
+        //board->rowObjectives[i] = rowCost;
+        //board->colObjectives[i] = colCost;
         obj += rowCost + colCost;
 //        std::cout << " Cost for row " << i << ": " << rowCost << std::endl;
 //        std::cout << " Cost for col " << i << ": " << colCost << std::endl;
@@ -84,11 +84,13 @@ int recalcObj(boardType *board) {
     for (int i = 0; i < board->N; i++, value++) possibleValues.push_back(value);
 
     HistoryEntry lastChange = board->moveHistory.peekLast();
+
     int change = 0;
     //for each rowChanged
     for (const auto &rowData : lastChange.changedRowObjectives) {
         //get the changed row id and collect values along it
         int rc = rowData.first;
+
         std::vector<int> rowValues(board->N);
         for (int i = 0; i < board->N; i++) {
             rowValues.push_back(board->board[rc][i]);
@@ -101,8 +103,7 @@ int recalcObj(boardType *board) {
                 rowCost++;
         }
         //std::cout << "row " << rc << " prev cost " << rowData.second << " cost " << rowCost << std::endl;
-
-        change += rowCost - board->rowObjectives[rc];
+        change += rowCost - board->rowObjectives[rc];//rowData.second;
         board->rowObjectives[rc] = rowCost;
     }
 
@@ -123,11 +124,43 @@ int recalcObj(boardType *board) {
         }
         //std::cout << "col " << cc << " prev cost " << colData.second << " cost " << colCost << std::endl;
 
-        change += colCost - board->colObjectives[cc];
+        change += colCost - board->colObjectives[cc];//colData.second;
         board->colObjectives[cc] = colCost;
     }
 
     return change;
+}
+
+int calcObjInitial(boardType *board) {
+    vector<int> possibleValues;
+    int value = board->minCellValue;
+    for (int i = 0; i < board->N; i++, value++) possibleValues.push_back(value);
+
+    //objective function is calculated in current board like proposed in Lewis' paper
+    //NOTE: maybe it would be faster to just calculate duplicate values?
+    int obj = 0;
+    for (int i = 0; i < board->N; i++) {
+        std::vector<int> rowValues(board->N);
+        std::vector<int> colValues(board->N);
+        for (int j = 0; j < board->N; j++) {
+            rowValues.push_back(board->board[i][j]);
+            colValues.push_back(board->board[j][i]);
+        }
+        int rowCost = 0, colCost = 0;
+        for (int possibleValue = board->minCellValue; possibleValue < board->maxCellValue; possibleValue++) {
+            //if row/col missing a value then increase cost
+            if (std::find(rowValues.begin(), rowValues.end(), possibleValue) == rowValues.end())
+                rowCost++;
+            if (std::find(colValues.begin(), colValues.end(), possibleValue) == colValues.end())
+                colCost++;
+        }
+        board->rowObjectives[i] = rowCost;
+        board->colObjectives[i] = colCost;
+        obj += rowCost + colCost;
+//        std::cout << " Cost for row " << i << ": " << rowCost << std::endl;
+//        std::cout << " Cost for col " << i << ": " << colCost << std::endl;
+    }
+    return obj;
 }
 
 
