@@ -5,7 +5,6 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_FLAGS "-s -O3")
 
 set(PROJECT_HEADERS
-        Solver.h
         SudokuIO.h
         #utils
         utils/boardUtils.h
@@ -51,7 +50,6 @@ set(PROJECT_SOURCES
 
         MoveHistory.cpp
         MoveData.cpp
-        Solver.cpp
         board.cpp
         )
 

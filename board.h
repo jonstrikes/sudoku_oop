@@ -5,6 +5,9 @@
 #include <cmath>
 #include <vector>
 #include <iostream>
+#include <random>
+#include <algorithm>
+#include <ctime>
 
 #include "MoveHistory.h"
 
@@ -22,7 +25,6 @@ struct boardType{
 
     vector<int> rowObjectives;
     vector<int> colObjectives;
-    int totalObjective;
 
     MoveHistory moveHistory;
 
@@ -36,6 +38,12 @@ struct boardType{
     void undoChange();
     //discards all records of previous changes from history
     void acceptChange();
+    //generates an initial solution or randomly reassigns an existing one
+    void generateInitialSolution();
+    //assigns row and column objective scores for the entire board
+    int calculateObjective();
+    //updates row and column objectives based on the last change recorded
+    int updateObjective();
 
 private:
     static std::string cellToString(int cell);

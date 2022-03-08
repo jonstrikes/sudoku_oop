@@ -1,23 +1,24 @@
 #include "improveOrEqual.h"
 
-ImproveOrEqual::ImproveOrEqual(boardType board) : Acceptor(board){
+ImproveOrEqual::ImproveOrEqual(boardType &board) : Acceptor(board){
+    std::cout<<"THIS DID CALL"<<std::endl;
 }
 
 int ImproveOrEqual::process(boardType &board) {
-    int objChange = recalcObj(&board);
+    int objChange = board.updateObjective();
 
     if(objChange > 0) {
         std::cout << "rejected " << objChange;
         board.undoChange();
     } else {
-        std::cout << "accepted " << objChange;
+        std::cout << "accepted " << objChange << std::endl;
         objective += objChange;
         board.acceptChange();
     }
 
     std::cout << "\nAfter obj change of: " << objChange << std::endl;
     std::cout << "Total objective: " << objective << std::endl;
-    std::cout << "Actual objective " << calcObj(&board) << std::endl << std::endl;
+    //std::cout << "Actual objective " << board.calculateObjective() << std::endl << std::endl;
 
     return objChange;
 }

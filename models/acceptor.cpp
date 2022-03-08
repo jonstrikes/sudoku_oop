@@ -1,7 +1,7 @@
 #include "acceptor.h"
 
 Acceptor::Acceptor(boardType &board) {
-    objective = calcObj(&board);
+    objective = board.calculateObjective();
 }
 
 bool Acceptor::isSolved() const {

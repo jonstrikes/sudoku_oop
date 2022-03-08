@@ -1,6 +1,5 @@
 #include <string>
 #include "SudokuIO.h"
-#include "Solver.h"
 #include "models/selector.h"
 
 #include "acceptors/improveOrEqual.h"
@@ -17,11 +16,6 @@ int main() {
     std::string order5 = "benchmark_puzzles/benchmarks5x5/80/puzzle13.txt";
 
     srand(time(nullptr));
-
-    boardType board = readFile(order3);
-    board.printBoard();
-    fillGrid(&board);
-    board.printBoard();
 
 //    int iterations = 0;
 //
@@ -66,14 +60,20 @@ int main() {
 //    std::cout<<std::endl<< calcObj(&board) <<std::endl;
 //    board.printBoard();
 
-    //calculate initial objective
-    calcObjInitial(&board);
+    //read and print problem
+    boardType board = readFile(order3);
+    board.printBoard();
 
-    //test one run
+    //fill in and print initial solution
+    board.generateInitialSolution();
+    board.printBoard();
+
+    //initialise specified hyperheuristic
     Greedy selector;
     ImproveOrEqual acceptor(board);
 
-    while(!acceptor.isSolved()){ // isSolved or timout
+    // isSolved or timout
+    while(!acceptor.isSolved()){
         //move selection
         selector.select(board);
         //move acceptance

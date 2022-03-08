@@ -4,7 +4,6 @@
 #include "../models/selector.h"
 #include <limits>
 #include "../board.h"
-#include "../Solver.h"
 
 class Greedy : public Selector
 {

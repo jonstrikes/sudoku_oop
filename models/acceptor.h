@@ -2,7 +2,6 @@
 #define SUDOKU_OOP_ACCEPTOR_H
 
 #include "../board.h"
-#include "../Solver.h"
 
 class Acceptor
 {

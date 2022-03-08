@@ -38,6 +38,7 @@ boardType readFile(const string& fileDir){
     boardType board{};
     board.n = n;
     board.N = N;
+
     board.minCellValue = minCellValue;
     board.maxCellValue = maxCellValue;
 
@@ -47,8 +48,6 @@ boardType readFile(const string& fileDir){
     board.colObjectives = colObjs;
     board.rowObjectives = rowObjs;
 
-    //initialise total objective to some non zero value
-    board.totalObjective = N * 2 * N;
     //initialise boards move history
     board.moveHistory = MoveHistory();
 

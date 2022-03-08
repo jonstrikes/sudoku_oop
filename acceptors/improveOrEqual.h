@@ -6,7 +6,7 @@
 class ImproveOrEqual : public Acceptor
 {
 public:
-    explicit ImproveOrEqual(boardType board);
+    explicit ImproveOrEqual(boardType &board);
     int process(boardType &board) override;
 };
 

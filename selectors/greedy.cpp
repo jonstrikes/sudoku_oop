@@ -14,7 +14,7 @@ void Greedy::select(boardType &board) {
         (*operators[i])(board);
 
         //find best value
-        int currentScore = recalcObj(&board);
+        int currentScore = board.updateObjective();
         if(currentScore < bestScore){
             bestOperator = i;
             bestScore = currentScore;
