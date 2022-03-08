@@ -11,7 +11,7 @@
 #include "selectors/greedy.h"
 
 int main() {
-    std::string order3 = "benchmark_puzzles/benchmarks3x3/80/puzzle3.txt";
+    std::string order3 = "benchmark_puzzles/benchmarks3x3/10/puzzle10.txt";
     std::string order4 = "benchmark_puzzles/benchmarks4x4/40/puzzle6.txt";
     std::string order5 = "benchmark_puzzles/benchmarks5x5/80/puzzle13.txt";
 
@@ -68,7 +68,7 @@ int main() {
     board.generateInitialSolution();
     board.printBoard();
 
-    //initialise specified hyperheuristic
+    //initialise specified hyper-heuristic
     Greedy selector;
     ImproveOrEqual acceptor(board);
 

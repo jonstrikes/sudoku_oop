@@ -94,20 +94,38 @@ void boardType::generateInitialSolution() {
                 }
             }
 
-            if (missing.empty()) continue;
+            //do nothing if block has no empty cells
+            if (missing.empty())
+                continue;
+
+            //complete block with a single empty cell
+            if (missing.size() == 1) {
+                for (int r = br * n; r < (br + 1) * n; r++) {
+                    for (int c = bc * n; c < (bc + 1) * n; c++) {
+                        //fix cell
+                        fixed[r][c] = true;
+                    }
+                }
+            }
+
             //shuffle missing values
             std::shuffle(missing.begin(), missing.end(), std::mt19937(std::time(nullptr)));
             //fill in missing values
             for (int r = br * n; r < (br + 1) * n; r++) {
                 for (int c = bc * n; c < (bc + 1) * n; c++) {
-                    if (board[r][c] != -1) continue;
+                    //skip non-empty cells
+                    if (board[r][c] != -1)
+                        continue;
+
                     board[r][c] = missing.back();
                     missing.pop_back();
                 }
             }
-        }//end block col for
+
+        }
     }
 }
+
 
 int boardType::calculateObjective() {
     vector<int> possibleValues;
