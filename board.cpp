@@ -211,3 +211,61 @@ int boardType::updateObjective() {
     return change;
 }
 
+bool boardType::verifySolved() {
+    bool isCorrect = true;
+
+    //check rows
+    for(const std::vector<int>& row : board){
+        std::vector<bool> encountered(N);
+
+        for(int val : row){
+            if(encountered[val]) {
+                isCorrect = false;
+                std::cout<< "! Duplicate row value found: " << val << std::endl;
+            }
+            encountered[val] = true;
+        }
+
+        //reset work vector
+        encountered.assign(encountered.size(), false);
+    }
+
+    //check columns
+    for(int col=0; col < N; col++){
+        std::vector<bool> encountered(N);
+        for(int row=0; row < N; row++){
+            if(encountered[board[row][col]]) {
+                isCorrect = false;
+                std::cout << "! Duplicate col value found: " << board[row][col] << std::endl;
+            }
+            encountered[board[row][col]] = true;
+        }
+
+        //reset work vector
+        encountered.assign(encountered.size(), false);
+    }
+
+    //check blocks
+    for (int br = 0; br < n; br++) {
+        for (int bc = 0; bc < n; bc++) {
+            std::vector<bool> encountered(N);
+            //iterate values of each block
+            for (int r = br * n; r < (br + 1) * n; r++) {
+                for (int c = bc * n; c < (bc + 1) * n; c++) {
+                    if(encountered[board[r][c]]) {
+                        isCorrect = false;
+                        std::cout<< "! Duplicate block value found: " << board[r][c] << std::endl;
+                    }
+                    encountered[board[r][c]] = true;
+                }
+            }
+            //reset work vector
+            encountered.assign(encountered.size(), false);
+        }
+    }
+
+    return isCorrect;
+}
+
+
+

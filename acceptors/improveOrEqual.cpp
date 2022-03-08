@@ -1,7 +1,6 @@
 #include "improveOrEqual.h"
 
 ImproveOrEqual::ImproveOrEqual(boardType &board) : Acceptor(board){
-    std::cout<<"THIS DID CALL"<<std::endl;
 }
 
 int ImproveOrEqual::process(boardType &board) {

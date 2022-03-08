@@ -38,12 +38,16 @@ struct boardType{
     void undoChange();
     //discards all records of previous changes from history
     void acceptChange();
+
     //generates an initial solution or randomly reassigns an existing one
     void generateInitialSolution();
     //assigns row and column objective scores for the entire board
     int calculateObjective();
     //updates row and column objectives based on the last change recorded
     int updateObjective();
+
+    //verifies if the board is a correct solution
+    bool verifySolved();
 
 private:
     static std::string cellToString(int cell);
