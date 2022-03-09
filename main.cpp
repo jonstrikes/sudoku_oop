@@ -3,6 +3,7 @@
 #include "models/selector.h"
 
 #include "acceptors/improveOrEqual.h"
+#include "acceptors/onlyImprove.h"
 
 #include "selectors/simpleRandom.h"
 #include "selectors/randomDescent.h"
@@ -27,7 +28,7 @@ int main() {
 
     //initialise specified hyper-heuristic
     Greedy selector;
-    ImproveOrEqual acceptor(board);
+    OnlyImprove acceptor(board);
 
     // isSolved or timout
     while(!acceptor.isSolved()){

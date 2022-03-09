@@ -1,18 +1,19 @@
-#include "improveOrEqual.h"
+#include "onlyImprove.h"
 
-ImproveOrEqual::ImproveOrEqual(boardType &board) : Acceptor(board){
+OnlyImprove::OnlyImprove(boardType &board) : Acceptor(board){
+
 }
 
-int ImproveOrEqual::process(boardType &board) {
+int OnlyImprove::process(boardType &board) {
     int objChange = board.updateObjective();
 
-    if(objChange > 0) {
-        std::cout << "rejected " << objChange;
-        board.undoChange();
-    } else {
+    if(objChange < 0) {
         std::cout << "accepted " << objChange;
         objective += objChange;
         board.acceptChange();
+    } else {
+        std::cout << "rejected " << objChange;
+        board.undoChange();
     }
 
     std::cout << "\nAfter obj change of: " << objChange << std::endl;

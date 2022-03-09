@@ -21,6 +21,7 @@ set(PROJECT_HEADERS
         #acceptors
         models/acceptor.h
         acceptors/improveOrEqual.h
+        acceptors/onlyImprove.h
 
         MoveHistory.h
         MoveData.h
@@ -47,6 +48,7 @@ set(PROJECT_SOURCES
         #acceptors
         models/acceptor.cpp
         acceptors/improveOrEqual.cpp
+        acceptors/onlyImprove.cpp
 
         MoveHistory.cpp
         MoveData.cpp
