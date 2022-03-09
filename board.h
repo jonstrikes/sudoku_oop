@@ -41,6 +41,8 @@ struct boardType{
 
     //generates an initial solution or randomly reassigns an existing one
     void generateInitialSolution();
+    //shuffles the unfixed cells of the current solution
+    void randomiseExistingSolution();
     //assigns row and column objective scores for the entire board
     int calculateObjective();
     //updates row and column objectives based on the last change recorded

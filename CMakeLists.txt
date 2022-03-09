@@ -8,8 +8,10 @@ set(PROJECT_HEADERS
         SudokuIO.h
         #utils
         utils/boardUtils.h
+
         #operators
         operators/operators.h
+
         #selectors
         models/selector.h
         selectors/simpleRandom.h
@@ -22,6 +24,7 @@ set(PROJECT_HEADERS
         models/acceptor.h
         acceptors/improveOrEqual.h
         acceptors/onlyImprove.h
+        acceptors/simulatedAnnealing.h
 
         MoveHistory.h
         MoveData.h
@@ -32,11 +35,13 @@ set(PROJECT_SOURCES
         SudokuIO.cpp
         #utils
         utils/boardUtils.cpp
+
         #operators
         operators/swap.cpp
         operators/insert.cpp
         operators/invert.cpp
         operators/cpoExchange.cpp
+
         #selectors
         models/selector.cpp
         selectors/simpleRandom.cpp
@@ -49,6 +54,7 @@ set(PROJECT_SOURCES
         models/acceptor.cpp
         acceptors/improveOrEqual.cpp
         acceptors/onlyImprove.cpp
+        acceptors/simulatedAnnealing.cpp
 
         MoveHistory.cpp
         MoveData.cpp

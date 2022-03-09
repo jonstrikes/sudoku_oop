@@ -102,7 +102,7 @@ void boardType::generateInitialSolution() {
             if (missing.size() == 1) {
                 for (int r = br * n; r < (br + 1) * n; r++) {
                     for (int c = bc * n; c < (bc + 1) * n; c++) {
-                        //fix cell
+                        //fix every cell
                         fixed[r][c] = true;
                     }
                 }
@@ -265,6 +265,45 @@ bool boardType::verifySolved() {
     }
 
     return isCorrect;
+}
+
+void boardType::randomiseExistingSolution() {
+    for (int br = 0; br < n; br++) {
+        for (int bc = 0; bc < n; bc++) {
+            //initialise missing values to all possible values
+            vector<int> missing;
+            int value = minCellValue;
+            for (int i = 0; i < N; i++, value++) missing.push_back(value);
+
+            //collect missing values from current block
+            for (int r = br * n; r < (br + 1) * n; r++) {
+                for (int c = bc * n; c < (bc + 1) * n; c++) {
+                    if (fixed[r][c]) continue;
+                    //remove encountered cell values, leaving the missing values
+                    missing.erase(std::remove(missing.begin(), missing.end(), board[r][c]), missing.end());
+                }
+            }
+
+            //do nothing if block has no empty cells
+            if (missing.empty())
+                continue;
+
+            //shuffle missing values
+            std::shuffle(missing.begin(), missing.end(), std::mt19937(std::time(nullptr)));
+            //fill in missing values
+            for (int r = br * n; r < (br + 1) * n; r++) {
+                for (int c = bc * n; c < (bc + 1) * n; c++) {
+                    //skip non-empty cells
+                    if (board[r][c] != -1)
+                        continue;
+
+                    board[r][c] = missing.back();
+                    missing.pop_back();
+                }
+            }
+
+        }
+    }
 }
 
 

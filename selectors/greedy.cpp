@@ -20,7 +20,7 @@ void Greedy::select(boardType &board) {
             bestScore = currentScore;
         }
 
-        //reset board for next iteration
+        //reset board for next iterationCount
         board.undoChange();
     }
 
