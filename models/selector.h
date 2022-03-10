@@ -11,7 +11,7 @@ protected:
 
 public:
     Selector();
-    ~Selector() {}
+    virtual ~Selector() {}
     virtual void select(boardType &board) = 0;
     virtual void updateState(int objChange) = 0;
 };

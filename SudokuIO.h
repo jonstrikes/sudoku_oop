@@ -6,6 +6,7 @@
 #include <cstring>
 #include <cstdlib>
 #include <cerrno>
+#include <algorithm>
 #include "board.h"
 
 

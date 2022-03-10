@@ -9,7 +9,7 @@ protected:
     int objective;
 public:
     explicit Acceptor(boardType &board);
-    virtual ~Acceptor() {}
+    virtual ~Acceptor() {};
     virtual int process(boardType &board) = 0;
     [[nodiscard]] bool isSolved() const;
 };
