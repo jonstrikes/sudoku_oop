@@ -8,12 +8,16 @@ class Selector
 {
 protected:
     std::vector<void (*)(boardType&)>  operators;
+    std::vector<int> useCounts;
+    int iterations;
 
 public:
     Selector();
     virtual ~Selector() {}
     virtual void select(boardType &board) = 0;
     virtual void updateState(int objChange) = 0;
+    void printOperatorCounts();
+    int getIterations();
 };
 
 

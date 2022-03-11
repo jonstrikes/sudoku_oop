@@ -1,7 +1,6 @@
 #include "simulatedAnnealing.h"
 
 SimulatedAnnealing::SimulatedAnnealing(boardType &board, Selector &selector) : Acceptor(board) {
-    std::cout << objective << std::endl;
     startingObjective = objective;
     iterationCount = 0;
     worseningIterationCount = 0;
@@ -13,7 +12,8 @@ SimulatedAnnealing::SimulatedAnnealing(boardType &board, Selector &selector) : A
     initialTemperature = temperature;
     iterationLimit = calculateIterationLimit(board);
 
-    std::cout << temperature << std::endl;
+    printf("Starting objective:     %d\n", objective);
+    printf("Starting temperature:   %f\n", temperature);
 }
 
 int SimulatedAnnealing::process(boardType &board) {
@@ -44,11 +44,6 @@ int SimulatedAnnealing::process(boardType &board) {
         //update local variables
         objective = board.calculateObjective();
 
-        std::cout << "Current iteration " << iterationCount << " Iteration limit  " << iterationLimit << std::endl;
-        std::cout << "Current temperature " << temperature << std::endl;
-        std::cout << "After obj change of: " << objChange << std::endl;
-        std::cout << "Total objective: " << objective << std::endl << std::endl;
-
         restartCount++;
         temperature = initialTemperature;
         iterationCount = 0;
@@ -70,6 +65,10 @@ int SimulatedAnnealing::process(boardType &board) {
         //reset markov chain variables
         startingObjective = objective;
         iterationCount = 0;
+
+        improvingIterationCount++;
+        printf("Iteration: %10d\t Objective: %10d\t Temperature: %10f\n",
+               iterationLimit * improvingIterationCount, objective, temperature);
         return 0;
     }
 }

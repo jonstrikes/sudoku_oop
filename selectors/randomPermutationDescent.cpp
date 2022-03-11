@@ -6,11 +6,14 @@ RandomPermutationDescent::RandomPermutationDescent() : Selector(){
     auto rng = std::default_random_engine {};
     std::shuffle(std::begin(permutation), std::end(permutation), rng);
 
-    currentId = permutation[0];
+    currentId = 0;
 }
 
 void RandomPermutationDescent::select(boardType &board) {
     (*operators[permutation[currentId]])(board);
+
+    useCounts[permutation[currentId]] ++;
+    iterations++;
 }
 
 void RandomPermutationDescent::updateState(int change) {

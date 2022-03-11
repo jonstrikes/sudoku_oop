@@ -26,6 +26,8 @@ void Greedy::select(boardType &board) {
 
     //apply the best
     (*operators[bestOperator])(board);
+    useCounts[bestOperator]++;
+    iterations++;
 }
 
 void Greedy::updateState(int change) {

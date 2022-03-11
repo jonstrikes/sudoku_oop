@@ -6,11 +6,14 @@ RandomPermutation::RandomPermutation() : Selector(){
     auto rng = std::default_random_engine {};
     std::shuffle(std::begin(permutation), std::end(permutation), rng);
 
-    currentId = permutation[0];
+    currentId = 0;
 }
 
 void RandomPermutation::select(boardType &board) {
     (*operators[currentId])(board);
+
+    useCounts[permutation[currentId]] ++;
+    iterations++;
 }
 
 void RandomPermutation::updateState(int change) {

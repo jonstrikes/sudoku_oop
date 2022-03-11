@@ -8,6 +8,9 @@ void RandomDescent::select(boardType &board) {
         lastLLHUsed = std::rand() % operators.size();
     }
     (*operators[lastLLHUsed])(board);
+
+    useCounts[lastLLHUsed]++;
+    iterations++;
 }
 
 void RandomDescent::updateState(int objectiveChange) {

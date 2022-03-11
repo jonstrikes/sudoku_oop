@@ -6,6 +6,13 @@
 class ImproveOrEqual : public Acceptor
 {
 public:
+    double timeSpentRecalculating;
+    double timeSpentUndoing;
+    double timeSpentAccepting;
+
+    int iterations;
+    int acceptCalled, undoCalled, recalcCalled;
+
     explicit ImproveOrEqual(boardType &board);
     int process(boardType &board) override;
 };
