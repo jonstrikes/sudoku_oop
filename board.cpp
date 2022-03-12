@@ -163,53 +163,103 @@ int boardType::updateObjective() {
     if(moveHistory.empty())
         return 0;
 
+    int change = 0;
     HistoryEntry lastChange = moveHistory.peekLast();
 
-    int change = 0;
-    //for each rowChanged
+    std::vector<bool> encountered(N);
+    //check rows
     for (const auto &rowData : lastChange.changedRowObjectives) {
-        //get the id and cell values in that column
         int rc = rowData.first;
-
-        std::vector<int> rowValues(N);
-        for (int i = 0; i < N; i++) {
-            rowValues.push_back(board[rc][i]);
-        }
-        //count number of missing cell values
         int rowCost = 0;
-        for (int possibleValue = minCellValue; possibleValue < maxCellValue; possibleValue++) {
-            //if row/col missing a value then increase cost
-            if (std::find(rowValues.begin(), rowValues.end(), possibleValue) == rowValues.end())
+
+        for(int val : board[rc]){
+            if(encountered[val]) {
                 rowCost++;
+            }
+            encountered[val] = true;
         }
-        //std::cout << "row " << rc << " prev cost " << rowData.second << " cost " << rowCost << std::endl;
-        change += rowCost - rowObjectives[rc];//rowData.second;
+
+        //update objectives
+        change += rowCost - rowObjectives[rc];
         rowObjectives[rc] = rowCost;
+
+        //reset work vector
+        encountered.assign(encountered.size(), false);
     }
 
-    //for each previously changed column
     for (const auto &colData : lastChange.changedColObjectives) {
         //get the id and cell values in that column
         int cc = colData.first;
-        std::vector<int> colValues(N);
-        for (int i = 0; i < N; i++) {
-            colValues.push_back(board[i][cc]);
-        }
-        //count number of missing cell values
         int colCost = 0;
-        for (int possibleValue = minCellValue; possibleValue < maxCellValue; possibleValue++) {
-            //if some value missing then increase cost
-            if (std::find(colValues.begin(), colValues.end(), possibleValue) == colValues.end())
-                colCost++;
-        }
-        //std::cout << "col " << cc << " prev cost " << colData.second << " cost " << colCost << std::endl;
 
-        change += colCost - colObjectives[cc];//colData.second;
+        for (int row = 0; row < N; row++) {
+            if (encountered[board[row][cc]]) {
+                colCost++;
+            }
+            encountered[board[row][cc]] = true;
+        }
+        //update objectives
+        change += colCost - colObjectives[cc];
         colObjectives[cc] = colCost;
+
+        //reset work vector
+        encountered.assign(encountered.size(), false);
     }
 
     return change;
 }
+
+//int boardType::updateObjective() {
+//    if(moveHistory.empty())
+//        return 0;
+//
+//    HistoryEntry lastChange = moveHistory.peekLast();
+//
+//    int change = 0;
+//    //for each rowChanged
+//    for (const auto &rowData : lastChange.changedRowObjectives) {
+//        //get the id and cell values in that column
+//        int rc = rowData.first;
+//
+//        std::vector<int> rowValues(N);
+//        for (int i = 0; i < N; i++) {
+//            rowValues.push_back(board[rc][i]);
+//        }
+//        //count number of missing cell values
+//        int rowCost = 0;
+//        for (int possibleValue = minCellValue; possibleValue < maxCellValue; possibleValue++) {
+//            //if row/col missing a value then increase cost
+//            if (std::find(rowValues.begin(), rowValues.end(), possibleValue) == rowValues.end())
+//                rowCost++;
+//        }
+//        //std::cout << "row " << rc << " prev cost " << rowData.second << " cost " << rowCost << std::endl;
+//        change += rowCost - rowObjectives[rc];//rowData.second;
+//        rowObjectives[rc] = rowCost;
+//    }
+//
+//    //for each previously changed column
+//    for (const auto &colData : lastChange.changedColObjectives) {
+//        //get the id and cell values in that column
+//        int cc = colData.first;
+//        std::vector<int> colValues(N);
+//        for (int i = 0; i < N; i++) {
+//            colValues.push_back(board[i][cc]);
+//        }
+//        //count number of missing cell values
+//        int colCost = 0;
+//        for (int possibleValue = minCellValue; possibleValue < maxCellValue; possibleValue++) {
+//            //if some value missing then increase cost
+//            if (std::find(colValues.begin(), colValues.end(), possibleValue) == colValues.end())
+//                colCost++;
+//        }
+//        //std::cout << "col " << cc << " prev cost " << colData.second << " cost " << colCost << std::endl;
+//
+//        change += colCost - colObjectives[cc];//colData.second;
+//        colObjectives[cc] = colCost;
+//    }
+//
+//    return change;
+//}
 
 bool boardType::verifySolved() {
     bool isCorrect = true;

@@ -9,6 +9,7 @@ class Selector
 protected:
     std::vector<void (*)(boardType&)>  operators;
     std::vector<int> useCounts;
+    std::vector<double> timesSpent;
     int iterations;
 
 public:
