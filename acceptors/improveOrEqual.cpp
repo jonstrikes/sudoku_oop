@@ -45,8 +45,7 @@ int ImproveOrEqual::process(boardType &board) {
         printf("Call counts:\nAccept: %d\t Undo: %d\t Recalc: %d\t \n", acceptCalled, undoCalled, recalcCalled);
         printf("Total time:\nAccept: %f\t Undo: %f\t Recalc: %f\t \n", timeSpentAccepting, timeSpentUndoing, timeSpentRecalculating);
 
-        std::cout << "Total objective: " << objective << std::endl;
-        std::cout << "Actual objective " << board.calculateObjective() << std::endl << std::endl;
+        std::cout << "Total objective: " << objective << std::endl << std::endl;
     }
 
 //    std::cout << "\nAfter obj change of: " << objChange << std::endl;

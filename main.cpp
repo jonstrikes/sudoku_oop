@@ -77,11 +77,12 @@ int main(int argc, char **argv) {
     board.printBoard();
     board.verifySolved();
 
-    printf("Total iterations: %d\n", selector->getIterations());
-    printf("Time taken: %.2fs\n", (double)(clock() - tStart)/CLOCKS_PER_SEC);
-    printf("Time taken: %.2fs\n", (stime + atime)/CLOCKS_PER_SEC);
-    printf("Selector time taken: %.5fs\n", stime/CLOCKS_PER_SEC);
-    printf("Acceptor time taken: %.5fs\n", atime/CLOCKS_PER_SEC);
+    printf("\nTotal iterations:     %d\n", selector->getIterations());
+    printf("Iterations per second:  %.2fs\n", iterations/((double)(clock() - tStart)/CLOCKS_PER_SEC));
+    printf("Time taken:             %.2fs\n", (double)(clock() - tStart)/CLOCKS_PER_SEC);
+    printf("Sel and Acc time:       %.2fs\n", (stime + atime)/CLOCKS_PER_SEC);
+    printf("Selector time taken:    %.5fs\n", stime/CLOCKS_PER_SEC);
+    printf("Acceptor time taken:    %.5fs\n", atime/CLOCKS_PER_SEC);
     selector->printOperatorCounts();
 
     delete acceptor;
