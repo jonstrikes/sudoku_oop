@@ -50,7 +50,7 @@ void insert(boardType &board) {
         }
 
         prev = board.board[r][c];
-        moveData.emplace_back(r, c, prev);
+        moveData.emplace_back(r, c, prev, board.rowObjectives[r], board.colObjectives[c]);
         board.board[r][c] = swapVal;
 
         if(r == rDest && c == cDest) break;

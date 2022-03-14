@@ -3,6 +3,7 @@ project(sudoku_oop)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_FLAGS "-s -O3")
+set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
 set(PROJECT_HEADERS
         SudokuIO.h
@@ -26,8 +27,7 @@ set(PROJECT_HEADERS
         acceptors/onlyImprove.h
         acceptors/simulatedAnnealing.h
 
-        MoveHistory.h
-        MoveData.h
+        MoveRecord.h
         board.h)
 
 set(PROJECT_SOURCES
@@ -56,8 +56,7 @@ set(PROJECT_SOURCES
         acceptors/onlyImprove.cpp
         acceptors/simulatedAnnealing.cpp
 
-        MoveHistory.cpp
-        MoveData.cpp
+        MoveRecord.cpp
         board.cpp
         )
 

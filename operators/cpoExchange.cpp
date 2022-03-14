@@ -14,23 +14,25 @@ void cpoExchange(boardType &board) {
 
     //std::cout << "start point: " << r << ":" << c << std::endl;
 
-    std::pair<int, int>left = getNeighbourCoords(false, r, c, board.n);
-    std::pair<int, int>right = getNeighbourCoords(true, r, c, board.n);
+    std::pair<int, int> left = getNeighbourCoords(false, r, c, board.n);
+    std::pair<int, int> right = getNeighbourCoords(true, r, c, board.n);
 
-    while(true){
-        if(!isWithinBounds(left.first, left.second, board.N) || !isWithinBounds(right.first, right.second, board.N))
+    while (true) {
+        if (!isWithinBounds(left.first, left.second, board.N) || !isWithinBounds(right.first, right.second, board.N))
             break;
 
-        if(!areInSameBlock(left.first, left.second, right.first, right.second, board.n))
+        if (!areInSameBlock(left.first, left.second, right.first, right.second, board.n))
             break;
 
-        if(board.fixed[left.first][left.second] || board.fixed[right.first][right.second])
+        if (board.fixed[left.first][left.second] || board.fixed[right.first][right.second])
             break;
 
         //std::cout << "neighbours left " << left.first << ":" << left.second << " right " << right.first << ":" << right.second <<  std::endl;
 
-        moveData.emplace_back(left.first, left.second, board.board[left.first][left.second]);
-        moveData.emplace_back(right.first, right.second, board.board[right.first][right.second]);
+        moveData.emplace_back(left.first, left.second, board.board[left.first][left.second],
+                              board.rowObjectives[left.first], board.colObjectives[left.second]);
+        moveData.emplace_back(right.first, right.second, board.board[right.first][right.second],
+                              board.rowObjectives[right.first], board.colObjectives[right.second]);
 
         //swap neighbours
         int temp = board.board[left.first][left.second];

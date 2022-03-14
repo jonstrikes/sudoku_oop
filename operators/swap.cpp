@@ -18,8 +18,9 @@ void swap(boardType &board) {
     } while (board.fixed[r2][c2] || (r1 == r2 && c1 == c2));
 
 
-    moveData.emplace_back(r1, c1, board.board[r1][c1]);
-    moveData.emplace_back(r2, c2, board.board[r2][c2]);
+    moveData.emplace_back(r1, c1, board.board[r1][c1], board.rowObjectives[r1], board.colObjectives[c1]);
+    moveData.emplace_back(r2, c2, board.board[r2][c2], board.rowObjectives[r2], board.colObjectives[c2]);
+    //try calling board.moveRecord.recordChange();
     board.rememberChange(moveData);
 
     //std::cout<<"SWAPPING CELLS " << r1 << "," << c1 << " with " << r2 << "," << c2 << std::endl;

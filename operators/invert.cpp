@@ -1,7 +1,7 @@
 #include "../board.h"
 #include "../utils/boardUtils.h"
 
-void invert(boardType &board){
+void invert(boardType &board) {
     int r1, c1, r2, c2;
     vector<MoveData> moveData;
 
@@ -19,33 +19,33 @@ void invert(boardType &board){
 
     int rLeft, cLeft, rRight, cRight, temp;
 
-    if(r1 > r2 || r1 == r2 && c1 > c2){
+    if (r1 > r2 || r1 == r2 && c1 > c2) {
         rLeft = r2, cLeft = c2;
         rRight = r1, cRight = c1;
-    }
-    else{
+    } else {
         rLeft = r1, cLeft = c1;
         rRight = r2, cRight = c2;
     }
 
     std::pair<int, int> coordinates;
-    while(rLeft < rRight || ( rLeft == rRight && cLeft < cRight)){
-        if(board.fixed[rLeft][cLeft]){
+    while (rLeft < rRight || (rLeft == rRight && cLeft < cRight)) {
+        if (board.fixed[rLeft][cLeft]) {
             coordinates = getNeighbourCoords(true, rLeft, cLeft, board.n);
             rLeft = coordinates.first;
             cLeft = coordinates.second;
             continue;
         }
-        if(board.fixed[rRight][cRight]){
+        if (board.fixed[rRight][cRight]) {
             coordinates = getNeighbourCoords(false, rRight, cRight, board.n);
             rRight = coordinates.first;
             cRight = coordinates.second;
             continue;
         }
 
-
-        moveData.emplace_back(rLeft, cLeft, board.board[rLeft][cLeft]);
-        moveData.emplace_back(rRight, cRight, board.board[rRight][cRight]);
+        moveData.emplace_back(rLeft, cLeft, board.board[rLeft][cLeft], board.rowObjectives[rLeft],
+                              board.colObjectives[cLeft]);
+        moveData.emplace_back(rRight, cRight, board.board[rRight][cRight], board.rowObjectives[rRight],
+                              board.colObjectives[cRight]);
 
         temp = board.board[rLeft][cLeft];
         board.board[rLeft][cLeft] = board.board[rRight][cRight];

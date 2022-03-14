@@ -7,7 +7,7 @@ boardType::boardType(int n, int N, int minCellValue, int maxCellValue,
         n(n), N(N),
         minCellValue(minCellValue), maxCellValue(maxCellValue),
         board(std::move(board)), fixed(std::move(fixed)),
-        moveHistory()
+        moveRecord()
 {
     //initialise column and row objective containers
     rowObjectives = vector<int>(N);
@@ -44,12 +44,15 @@ string boardType::cellToString(int value) {
 }
 
 bool boardType::hasChange() {
-    return !this->moveHistory.empty();
+    return !this->moveRecord.empty();
 }
 
 //records a move
 void boardType::rememberChange(std::vector<MoveData> &changedCells) {
-    moveHistory.recordChange(changedCells, rowObjectives, colObjectives);
+    if(changedCells.empty())
+        return;
+
+    moveRecord.recordChange(changedCells);
 }
 
 //restores board and objective values to last recorded state, discarding respective entry from history
@@ -58,24 +61,13 @@ void boardType::undoChange() {
         return;
     }
 
-    HistoryEntry lastChange = moveHistory.popChange();
-
-    //reset cells that were changed
-    for (MoveData cellChanged : lastChange.changedCells) {
-        board[cellChanged.row][cellChanged.col] = cellChanged.val;
+    for(MoveData cell : moveRecord.getChange()){
+        board[cell.row][cell.col] = cell.val;
+        rowObjectives[cell.row] = cell.rowObjective;
+        colObjectives[cell.col] = cell.colObjective;
     }
 
-    //reset objective scores of rows to previous record
-    for (auto rowChange : lastChange.changedRowObjectives) {
-        //a pair is row, previous row score
-        rowObjectives[rowChange.first] = rowChange.second;
-    }
-
-    //reset objective scores of cols to previous record
-    for (auto colChange : lastChange.changedColObjectives) {
-        //a pair is col, previous col score
-        colObjectives[colChange.first] = colChange.second;
-    }
+    moveRecord.clear();
 }
 
 //discards all records of previous changes from history
@@ -83,9 +75,8 @@ void boardType::acceptChange() {
     if (!this->hasChange()) {
         return;
     }
-    while (this->hasChange()) {
-        moveHistory.popChange();
-    }
+
+    moveRecord.clear();
 }
 
 void boardType::generateInitialSolution() {
@@ -170,50 +161,37 @@ int boardType::calculateObjective() {
 }
 
 int boardType::updateObjective() {
-    if (moveHistory.empty())
+    if (moveRecord.empty())
         return 0;
 
+    std::vector<bool> encounteredAlongRow(N);
+    std::vector<bool> encounteredAlongCol(N);
     int change = 0;
-    HistoryEntry lastChange = moveHistory.peekLast();
 
-    std::vector<bool> encountered(N);
-    //check rows
-    for (const auto &rowData : lastChange.changedRowObjectives) {
-        int rc = rowData.first;
-        int rowCost = 0;
+    //this may calculate rows and cols multiple times
+    for(MoveData cell : moveRecord.getChange()){
+        int rowCost = 0, colCost = 0;
 
-        for (int val : board[rc]) {
-            if (encountered[val]) {
+        for(int i=0; i<N; i++){
+            if(encounteredAlongRow[board[cell.row][i]])
                 rowCost++;
-            }
-            encountered[val] = true;
-        }
+            encounteredAlongRow[board[cell.row][i]] = true;
 
-        //update objectives
-        change += rowCost - rowObjectives[rc];
-        rowObjectives[rc] = rowCost;
-
-        //reset work vector
-        encountered.assign(encountered.size(), false);
-    }
-
-    for (const auto &colData : lastChange.changedColObjectives) {
-        //get the id and cell values in that column
-        int cc = colData.first;
-        int colCost = 0;
-
-        for (int row = 0; row < N; row++) {
-            if (encountered[board[row][cc]]) {
+            if(encounteredAlongCol[board[i][cell.col]])
                 colCost++;
-            }
-            encountered[board[row][cc]] = true;
+            encounteredAlongCol[board[i][cell.col]] = true;
         }
-        //update objectives
-        change += colCost - colObjectives[cc];
-        colObjectives[cc] = colCost;
 
-        //reset work vector
-        encountered.assign(encountered.size(), false);
+        //update objective scores
+        change += rowCost - rowObjectives[cell.row];
+        rowObjectives[cell.row] = rowCost;
+
+        change += colCost - colObjectives[cell.col];
+        colObjectives[cell.col] = colCost;
+
+        //reset work vectors
+        encounteredAlongRow.assign(N, false);
+        encounteredAlongCol.assign(N, false);
     }
 
     return change;
