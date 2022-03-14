@@ -2,7 +2,19 @@
 
 using std::string;
 
-void boardType::printBoard(){
+boardType::boardType(int n, int N, int minCellValue, int maxCellValue,
+                     vector<vector<int>> board, vector<vector<int>> fixed) :
+        n(n), N(N),
+        minCellValue(minCellValue), maxCellValue(maxCellValue),
+        board(std::move(board)), fixed(std::move(fixed)),
+        moveHistory()
+{
+    //initialise column and row objective containers
+    rowObjectives = vector<int>(N);
+    colObjectives = vector<int>(N);
+}
+
+void boardType::printBoard() {
     string result;
     for (int row = 0; row < N; row++) {
         if (row != 0 && row % int(sqrt(N)) == 0) {
@@ -25,25 +37,24 @@ void boardType::printBoard(){
     std::cout << result << std::endl;
 }
 
-string boardType::cellToString(int value){
+string boardType::cellToString(int value) {
     std::string cell = value == -1 ? "" : std::to_string(value);
     cell.resize(2, ' ');
     return cell;
 }
 
-bool boardType::hasChange(){
+bool boardType::hasChange() {
     return !this->moveHistory.empty();
 }
 
 //records a move
-void boardType::rememberChange(std::vector<MoveData> &changedCells){
+void boardType::rememberChange(std::vector<MoveData> &changedCells) {
     moveHistory.recordChange(changedCells, rowObjectives, colObjectives);
 }
 
 //restores board and objective values to last recorded state, discarding respective entry from history
-void boardType::undoChange(){
-    //THIS CHECK MIGHT MAKE DEBUGGING NASTY
-    if(!this->hasChange()){
+void boardType::undoChange() {
+    if (!this->hasChange()) {
         return;
     }
 
@@ -51,7 +62,7 @@ void boardType::undoChange(){
 
     //reset cells that were changed
     for (MoveData cellChanged : lastChange.changedCells) {
-        board[cellChanged.getRow()][cellChanged.getCol()] = cellChanged.getVal();
+        board[cellChanged.row][cellChanged.col] = cellChanged.val;
     }
 
     //reset objective scores of rows to previous record
@@ -68,11 +79,11 @@ void boardType::undoChange(){
 }
 
 //discards all records of previous changes from history
-void boardType::acceptChange(){
-    if(!this->hasChange()){
+void boardType::acceptChange() {
+    if (!this->hasChange()) {
         return;
     }
-    while(this->hasChange()){
+    while (this->hasChange()) {
         moveHistory.popChange();
     }
 }
@@ -126,7 +137,6 @@ void boardType::generateInitialSolution() {
     }
 }
 
-
 int boardType::calculateObjective() {
     vector<int> possibleValues;
     int value = minCellValue;
@@ -143,7 +153,7 @@ int boardType::calculateObjective() {
             colValues.push_back(board[j][i]);
         }
         int rowCost = 0, colCost = 0;
-        for (int possibleValue = minCellValue; possibleValue < maxCellValue; possibleValue++) {
+        for (int possibleValue = minCellValue; possibleValue <= maxCellValue; possibleValue++) {
             //if row/col missing a value then increase cost
             if (std::find(rowValues.begin(), rowValues.end(), possibleValue) == rowValues.end())
                 rowCost++;
@@ -160,7 +170,7 @@ int boardType::calculateObjective() {
 }
 
 int boardType::updateObjective() {
-    if(moveHistory.empty())
+    if (moveHistory.empty())
         return 0;
 
     int change = 0;
@@ -172,8 +182,8 @@ int boardType::updateObjective() {
         int rc = rowData.first;
         int rowCost = 0;
 
-        for(int val : board[rc]){
-            if(encountered[val]) {
+        for (int val : board[rc]) {
+            if (encountered[val]) {
                 rowCost++;
             }
             encountered[val] = true;
@@ -209,69 +219,17 @@ int boardType::updateObjective() {
     return change;
 }
 
-//int boardType::updateObjective() {
-//    if(moveHistory.empty())
-//        return 0;
-//
-//    HistoryEntry lastChange = moveHistory.peekLast();
-//
-//    int change = 0;
-//    //for each rowChanged
-//    for (const auto &rowData : lastChange.changedRowObjectives) {
-//        //get the id and cell values in that column
-//        int rc = rowData.first;
-//
-//        std::vector<int> rowValues(N);
-//        for (int i = 0; i < N; i++) {
-//            rowValues.push_back(board[rc][i]);
-//        }
-//        //count number of missing cell values
-//        int rowCost = 0;
-//        for (int possibleValue = minCellValue; possibleValue < maxCellValue; possibleValue++) {
-//            //if row/col missing a value then increase cost
-//            if (std::find(rowValues.begin(), rowValues.end(), possibleValue) == rowValues.end())
-//                rowCost++;
-//        }
-//        //std::cout << "row " << rc << " prev cost " << rowData.second << " cost " << rowCost << std::endl;
-//        change += rowCost - rowObjectives[rc];//rowData.second;
-//        rowObjectives[rc] = rowCost;
-//    }
-//
-//    //for each previously changed column
-//    for (const auto &colData : lastChange.changedColObjectives) {
-//        //get the id and cell values in that column
-//        int cc = colData.first;
-//        std::vector<int> colValues(N);
-//        for (int i = 0; i < N; i++) {
-//            colValues.push_back(board[i][cc]);
-//        }
-//        //count number of missing cell values
-//        int colCost = 0;
-//        for (int possibleValue = minCellValue; possibleValue < maxCellValue; possibleValue++) {
-//            //if some value missing then increase cost
-//            if (std::find(colValues.begin(), colValues.end(), possibleValue) == colValues.end())
-//                colCost++;
-//        }
-//        //std::cout << "col " << cc << " prev cost " << colData.second << " cost " << colCost << std::endl;
-//
-//        change += colCost - colObjectives[cc];//colData.second;
-//        colObjectives[cc] = colCost;
-//    }
-//
-//    return change;
-//}
-
 bool boardType::verifySolved() {
     bool isCorrect = true;
 
     //check rows
-    for(const std::vector<int>& row : board){
+    for (const std::vector<int> &row : board) {
         std::vector<bool> encountered(N);
 
-        for(int val : row){
-            if(encountered[val]) {
+        for (int val : row) {
+            if (encountered[val]) {
                 isCorrect = false;
-                std::cout<< "! Duplicate row value found: " << val << std::endl;
+                std::cout << "! Duplicate row value found: " << val << std::endl;
             }
             encountered[val] = true;
         }
@@ -281,10 +239,10 @@ bool boardType::verifySolved() {
     }
 
     //check columns
-    for(int col=0; col < N; col++){
+    for (int col = 0; col < N; col++) {
         std::vector<bool> encountered(N);
-        for(int row=0; row < N; row++){
-            if(encountered[board[row][col]]) {
+        for (int row = 0; row < N; row++) {
+            if (encountered[board[row][col]]) {
                 isCorrect = false;
                 std::cout << "! Duplicate col value found: " << board[row][col] << std::endl;
             }
@@ -302,9 +260,9 @@ bool boardType::verifySolved() {
             //iterate values of each block
             for (int r = br * n; r < (br + 1) * n; r++) {
                 for (int c = bc * n; c < (bc + 1) * n; c++) {
-                    if(encountered[board[r][c]]) {
+                    if (encountered[board[r][c]]) {
                         isCorrect = false;
-                        std::cout<< "! Duplicate block value found: " << board[r][c] << std::endl;
+                        std::cout << "! Duplicate block value found: " << board[r][c] << std::endl;
                     }
                     encountered[board[r][c]] = true;
                 }

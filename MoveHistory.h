@@ -10,12 +10,12 @@
 
 struct HistoryEntry{
     HistoryEntry(std::vector<MoveData> changedCells,
-                 std::map<int, int> changedRowObjectives,
-                 std::map<int, int> changedColObjectives)
+                 std::map<int, int> &changedRowObjectives,
+                 std::map<int, int> &changedColObjectives)
                  :
                  changedCells(std::move(changedCells)),
-                 changedRowObjectives(std::move(changedRowObjectives)),
-                 changedColObjectives(std::move(changedColObjectives))
+                 changedRowObjectives(changedRowObjectives),
+                 changedColObjectives(changedColObjectives)
                  {}
 
     //an entry stores the cells changed by a LLH, and a map <row, rowObjective>

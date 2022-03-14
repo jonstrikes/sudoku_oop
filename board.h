@@ -28,6 +28,9 @@ struct boardType{
 
     MoveHistory moveHistory;
 
+    boardType(int n, int N, int minCellValue, int maxCellValue,
+              vector<vector<int>> board, vector<vector<int>> fixed);
+
     void printBoard();
 
     //checks if there are moves recorded in history
@@ -53,6 +56,8 @@ struct boardType{
 
 private:
     static std::string cellToString(int cell);
+    boardType(const boardType&);
+    boardType& operator = (const boardType&);
 };
 
 #endif //SUDOKU_OOP_BOARD_H

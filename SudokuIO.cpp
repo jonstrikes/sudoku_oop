@@ -15,15 +15,11 @@ boardType readFile(const string& fileDir){
     inFile >> n >> minCellValue;
 
     N = n*n;
-    maxCellValue = minCellValue + N;
+    maxCellValue = minCellValue + N - 1;
 
     //initialise grid and fixed
-    auto grid = vector<vector<int>> (N, vector<int>(N));
-    auto fixed = vector<vector<int>> (N, vector<int>(N));
-
-    //initialise column and row objective containers
-    auto colObjs = vector<int>(N);
-    auto rowObjs = vector<int>(N);
+    vector<vector<int>> grid(N, vector<int>(N));
+    vector<vector<int>> fixed(N, vector<int>(N));
 
     //all benchmark files contain one puzzle
     for (int row = 0; row < N; row++) {
@@ -35,23 +31,7 @@ boardType readFile(const string& fileDir){
         }
     }
 
-    boardType board{};
-    board.n = n;
-    board.N = N;
-
-    board.minCellValue = minCellValue;
-    board.maxCellValue = maxCellValue;
-
-    board.board = grid;
-    board.fixed = fixed;
-
-    board.colObjectives = colObjs;
-    board.rowObjectives = rowObjs;
-
-    //initialise boards move history
-    board.moveHistory = MoveHistory();
-
-    return board;
+    return boardType(n, N, minCellValue, maxCellValue, grid, fixed);
 }
 
 bool readCMDParams(char **input, int size, std::string& puzzleDir, std::string& outputLog, std::string& solutionOutput){

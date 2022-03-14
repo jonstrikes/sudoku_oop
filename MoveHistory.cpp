@@ -6,8 +6,11 @@ void MoveHistory::recordChange(const std::vector<MoveData>& changedCells,
     std::map<int, int> uniqueColObjs;
 
     for(MoveData entry : changedCells){
-        uniqueRowObjs.insert(std::pair<int, int>(entry.getRow(), rowObjectives[entry.getRow()]));
-        uniqueColObjs.insert(std::pair<int, int>(entry.getCol(), colObjectives[entry.getCol()]));
+        uniqueRowObjs.emplace(entry.row, rowObjectives[entry.row]);
+        uniqueColObjs.emplace(entry.col, colObjectives[entry.col]);
+
+//        uniqueRowObjs.insert(std::pair<int, int>(entry.getRow(), rowObjectives[entry.getRow()]));
+//        uniqueColObjs.insert(std::pair<int, int>(entry.getCol(), colObjectives[entry.getCol()]));
     }
 
     history.emplace_back(changedCells, uniqueRowObjs, uniqueColObjs);
