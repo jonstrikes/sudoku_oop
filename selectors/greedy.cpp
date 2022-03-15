@@ -2,12 +2,14 @@
 
 Greedy::Greedy() {
     bestOperator = 0;
-    bestScore = std::numeric_limits<int>::max();
+    //init score to lowest value
+    bestScore = 0xFF;
 }
 
 void Greedy::select(boardType &board) {
     bestOperator = 0;
-    bestScore = std::numeric_limits<int>::max();
+    //init score to lowest value
+    bestScore = 0xFF;
 
     for(int i=0; i<operators.size(); i++){
         //apply all operators

@@ -8,8 +8,8 @@
 class Greedy : public Selector
 {
 private:
-    int bestOperator;
-    int bestScore;
+    uint_fast8_t bestOperator;
+    uint_fast8_t bestScore;
 public:
     explicit Greedy();
     void select(boardType &board) override;

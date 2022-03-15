@@ -10,8 +10,8 @@ boardType::boardType(int n, int N, int minCellValue, int maxCellValue,
         moveRecord()
 {
     //initialise column and row objective containers
-    rowObjectives = vector<int>(N);
-    colObjectives = vector<int>(N);
+    rowObjectives = vector<uint_fast8_t>(N);
+    colObjectives = vector<uint_fast8_t>(N);
 }
 
 void boardType::printBoard() {
@@ -170,7 +170,7 @@ int boardType::updateObjective() {
 
     //this may calculate rows and cols multiple times
     for(MoveData cell : moveRecord.getChange()){
-        int rowCost = 0, colCost = 0;
+        uint_fast8_t rowCost = 0, colCost = 0;
 
         for(int i=0; i<N; i++){
             if(encounteredAlongRow[board[cell.row][i]])

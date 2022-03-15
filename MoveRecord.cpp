@@ -15,6 +15,6 @@ void MoveRecord::clear() {
     isEmpty = true;
 }
 
-bool MoveRecord::empty() {
+bool MoveRecord::empty() const {
     return isEmpty;
 }

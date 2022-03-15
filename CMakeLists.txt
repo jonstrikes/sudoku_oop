@@ -9,6 +9,7 @@ set(PROJECT_HEADERS
         SudokuIO.h
         #utils
         utils/boardUtils.h
+        utils/generalUtils.h
 
         #operators
         operators/operators.h
@@ -35,6 +36,7 @@ set(PROJECT_SOURCES
         SudokuIO.cpp
         #utils
         utils/boardUtils.cpp
+        utils/generalUtils.cpp
 
         #operators
         operators/swap.cpp

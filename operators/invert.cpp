@@ -1,5 +1,4 @@
-#include "../board.h"
-#include "../utils/boardUtils.h"
+#include "operators.h"
 
 void invert(boardType &board) {
     int r1, c1, r2, c2;
@@ -8,13 +7,13 @@ void invert(boardType &board) {
 //    std::cout << "Invert called" << std::endl;
 
     do {
-        r1 = rand() % board.N;
-        c1 = rand() % board.N;
+        r1 = fastrand() % board.N;
+        c1 = fastrand() % board.N;
     } while (board.fixed[r1][c1]);
 
     do {
-        r2 = rand() % board.n + r1 / board.n * board.n;
-        c2 = rand() % board.n + c1 / board.n * board.n;
+        r2 = fastrand() % board.n + r1 / board.n * board.n;
+        c2 = fastrand() % board.n + c1 / board.n * board.n;
     } while (board.fixed[r2][c2] || (r1 == r2 && c1 == c2));
 
     int rLeft, cLeft, rRight, cRight, temp;

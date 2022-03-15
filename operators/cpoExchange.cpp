@@ -1,5 +1,4 @@
-#include "../board.h"
-#include "../utils/boardUtils.h"
+#include "operators.h"
 
 void cpoExchange(boardType &board) {
     //std::cout << "CPOExchange called" << std::endl;
@@ -8,8 +7,8 @@ void cpoExchange(boardType &board) {
     vector<MoveData> moveData;
 
     do {
-        r = rand() % board.N;
-        c = rand() % board.N;
+        r = fastrand() % board.N;
+        c = fastrand() % board.N;
     } while (board.fixed[r][c]);
 
     //std::cout << "start point: " << r << ":" << c << std::endl;

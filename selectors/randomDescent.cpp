@@ -5,7 +5,7 @@ RandomDescent::RandomDescent() : Selector(), lastIterationImprovedObjective(), l
 void RandomDescent::select(boardType &board) {
     //select another heuristic if previous did not produce a better objective score
     if(!lastIterationImprovedObjective){
-        lastLLHUsed = std::rand() % operators.size();
+        lastLLHUsed = fastrand() % operators.size();
     }
     (*operators[lastLLHUsed])(board);
 

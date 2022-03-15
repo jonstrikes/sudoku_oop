@@ -7,8 +7,8 @@
 
 class RandomPermutationDescent : public Selector {
 private:
-    vector<int> permutation;
-    int currentId;
+    vector<uint_fast8_t> permutation;
+    uint_fast8_t currentId;
 public:
     explicit RandomPermutationDescent();
     void select(boardType &board) override;

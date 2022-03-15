@@ -2,6 +2,8 @@
 #define SUDOKU_OOP_OPERATORS_H
 
 #include "../board.h"
+#include "../utils/generalUtils.h"
+#include "../utils/boardUtils.h"
 
 void swap(boardType &board);
 void insert(boardType &board);

@@ -4,7 +4,7 @@ SimpleRandom::SimpleRandom() : Selector(){
 }
 
 void SimpleRandom::select(boardType &board) {
-    int randomOperatorID = std::rand() % operators.size();
+    uint_fast8_t randomOperatorID = fastrand() % operators.size();
 
         clock_t s1 = clock();
     (*operators[randomOperatorID])(board);

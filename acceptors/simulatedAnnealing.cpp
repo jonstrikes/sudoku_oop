@@ -67,8 +67,12 @@ int SimulatedAnnealing::process(boardType &board) {
         iterationCount = 0;
 
         improvingIterationCount++;
-        printf("Iteration: %10d\t Objective: %10d\t Temperature: %10f\n",
-               iterationLimit * improvingIterationCount, objective, temperature);
+
+        if((iterationLimit * improvingIterationCount) % (iterationLimit * 5) == 0){
+            printf("Iteration: %10d\t Objective: %10d\t Temperature: %10f\n",
+                   iterationLimit * improvingIterationCount, objective, temperature);
+        }
+
         return 0;
     }
 }

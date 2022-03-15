@@ -23,8 +23,8 @@ struct boardType {
     vector<vector<int>> board;
     vector<vector<int>> fixed;
 
-    vector<int> rowObjectives;
-    vector<int> colObjectives;
+    vector<uint_fast8_t> rowObjectives;
+    vector<uint_fast8_t> colObjectives;
 
     MoveRecord moveRecord;
 

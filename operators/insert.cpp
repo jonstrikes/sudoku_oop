@@ -7,13 +7,13 @@ void insert(boardType &board) {
 //    std::cout << "Insert called" << std::endl;
 
     do {
-        rSource = rand() % board.N;
-        cSource = rand() % board.N;
+        rSource = fastrand() % board.N;
+        cSource = fastrand() % board.N;
     } while (board.fixed[rSource][cSource]);
 
     do {
-        rDest = rand() % board.n + rSource / board.n * board.n;
-        cDest = rand() % board.n + cSource / board.n * board.n;
+        rDest = fastrand() % board.n + rSource / board.n * board.n;
+        cDest = fastrand() % board.n + cSource / board.n * board.n;
     } while (board.fixed[rDest][cDest] || (rSource == rDest && cSource == cDest));
 
     bool isBackwardInsert = (rDest > rSource || rDest == rSource && cDest > cSource);

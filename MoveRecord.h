@@ -40,7 +40,7 @@ public:
     std::vector<MoveData>& getChange();
 
     //check if no changes stored
-    bool empty();
+    bool empty() const;
 
     //clear recorded changes
     void clear();
