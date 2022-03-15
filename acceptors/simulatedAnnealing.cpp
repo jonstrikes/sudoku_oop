@@ -22,7 +22,7 @@ int SimulatedAnnealing::process(boardType &board) {
         int objChange = board.updateObjective();
         double prob = pow(2.718282, (-objChange / temperature));
 
-        if (objChange <= 0 || prob > (rand() / double(RAND_MAX))) {
+        if (objChange <= 0 || prob > (fastrand() / double(RAND_MAX))) {
             //std::cout << "accepted " << objChange << " with probability " << prob << std::endl;
             objective += objChange;
             board.acceptChange();

@@ -1,21 +1,19 @@
 #include "operators.h"
 
 void cpoExchange(boardType &board) {
-    //std::cout << "CPOExchange called" << std::endl;
-
     int r, c;
     vector<MoveData> moveData;
 
+    //set a unique non-fixed cell as the center point
     do {
         r = fastrand() % board.N;
         c = fastrand() % board.N;
     } while (board.fixed[r][c]);
 
-    //std::cout << "start point: " << r << ":" << c << std::endl;
-
     std::pair<int, int> left = getNeighbourCoords(false, r, c, board.n);
     std::pair<int, int> right = getNeighbourCoords(true, r, c, board.n);
-
+    //swap pairs of non-fixed values within the same block around the center point
+    // exchanges pairs until fixed value is bumped into or reached the end of sub-block
     while (true) {
         if (!isWithinBounds(left.first, left.second, board.N) || !isWithinBounds(right.first, right.second, board.N))
             break;
@@ -26,8 +24,7 @@ void cpoExchange(boardType &board) {
         if (board.fixed[left.first][left.second] || board.fixed[right.first][right.second])
             break;
 
-        //std::cout << "neighbours left " << left.first << ":" << left.second << " right " << right.first << ":" << right.second <<  std::endl;
-
+        //record data of the cell pair before exchange
         moveData.emplace_back(left.first, left.second, board.board[left.first][left.second],
                               board.rowObjectives[left.first], board.colObjectives[left.second]);
         moveData.emplace_back(right.first, right.second, board.board[right.first][right.second],
@@ -43,6 +40,7 @@ void cpoExchange(boardType &board) {
         right = getNeighbourCoords(true, right.first, right.second, board.n);
     }
 
+    //record previous state
     board.rememberChange(moveData);
 }
 
