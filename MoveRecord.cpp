@@ -1,7 +1,6 @@
 #include "MoveRecord.h"
 
 void MoveRecord::recordChange(const std::vector<MoveData> &aChange) {
-    //could try to just feed the MoveData arguments for each change?
     change = aChange;
     isEmpty = false;
 }

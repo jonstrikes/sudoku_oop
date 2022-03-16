@@ -3,18 +3,18 @@
 using std::string;
 using std::cout;
 
-boardType readFile(const string& fileDir){
+boardType readFile(const string &fileDir) {
     std::ifstream inFile;
     inFile.open(fileDir);
 
-    if (inFile.fail()){
+    if (inFile.fail()) {
         cout << "Error: " << strerror(errno);
     }
 
     int n, N, minCellValue, maxCellValue;
     inFile >> n >> minCellValue;
 
-    N = n*n;
+    N = n * n;
     maxCellValue = minCellValue + N - 1;
 
     //initialise grid and fixed
@@ -34,8 +34,9 @@ boardType readFile(const string& fileDir){
     return boardType(n, N, minCellValue, maxCellValue, grid, fixed);
 }
 
-bool readCMDParams(char **input, int size, std::string& puzzleDir, std::string& outputLog, std::string& solutionOutput){
-    if(size != 4 && size != 6){
+bool readCMDParams(char **input, int size, std::string &puzzleDir,
+                   std::string &outputLog, std::string &solutionOutput) {
+    if (size != 4 && size != 6) {
         printf("Sudoku Solver\n");
         printf("Usage: PuzzlePath OutputFile SolutionFile -acceptor -selector\n");
         printf("If either the acceptor or selector is not specified, the program defaults to Simple Random and Improve or Equal\n");
@@ -51,8 +52,8 @@ bool readCMDParams(char **input, int size, std::string& puzzleDir, std::string& 
     return true;
 }
 
-bool readCMDOptionalParams(char **input, int size, std::string& acceptorType, std::string& selectorType){
-    if(size != 6){
+bool readCMDOptionalParams(char **input, int size, std::string &acceptorType, std::string &selectorType) {
+    if (size != 6) {
         return false;
     }
     acceptorType = input[4];
@@ -60,14 +61,13 @@ bool readCMDOptionalParams(char **input, int size, std::string& acceptorType, st
     return true;
 }
 
-void readAcceptorMethod(const std::string& acceptorMethod, Acceptor *&acceptor, Selector *&selector, boardType &board){
-    if(acceptorMethod == "--only-improve" || acceptorMethod == "-oi"){
+void readAcceptorMethod(const std::string &acceptorMethod, Acceptor *&acceptor, Selector *&selector, boardType &board) {
+    if (acceptorMethod == "--only-improve" || acceptorMethod == "-oi") {
         acceptor = new OnlyImprove(board);
-    }
-    else if(acceptorMethod == "--improve-or-equal" || acceptorMethod == "-ie"){
+    } else if (acceptorMethod == "--improve-or-equal" || acceptorMethod == "--improve-equal" ||
+               acceptorMethod == "-ie" || acceptorMethod == "-ioe") {
         acceptor = new ImproveOrEqual(board);
-    }
-    else if(acceptorMethod == "--simulated-annealing" || acceptorMethod == "-sa"){
+    } else if (acceptorMethod == "--simulated-annealing" || acceptorMethod == "-sa") {
         acceptor = new SimulatedAnnealing(board, *selector);
     }
 //    else if(acceptorMethod == "--great-deluge" || acceptorMethod == "-gd"){
@@ -76,29 +76,24 @@ void readAcceptorMethod(const std::string& acceptorMethod, Acceptor *&acceptor, 
 //    else if(acceptorMethod == "--late-acceptance" || acceptorMethod == "-la"){
 //        acceptor = new LateAcceptance(board);
 //    }
-    else{
+    else {
         acceptor = new ImproveOrEqual(board);
         printf("Acceptor %s not found, using default: Improve or Equal\n", acceptorMethod.c_str());
     }
 }
 
-void readSelectorMethod(const std::string& selectorMethod, Selector *&selector){
-    if(selectorMethod == "--simple-random" || selectorMethod == "-sr"){
+void readSelectorMethod(const std::string &selectorMethod, Selector *&selector) {
+    if (selectorMethod == "--simple-random" || selectorMethod == "-sr") {
         selector = new SimpleRandom();
-    }
-    else if(selectorMethod == "--random-descent" || selectorMethod == "-rd"){
+    } else if (selectorMethod == "--random-descent" || selectorMethod == "-rd") {
         selector = new RandomDescent();
-    }
-    else if(selectorMethod == "--random-permutation" || selectorMethod == "-rp"){
+    } else if (selectorMethod == "--random-permutation" || selectorMethod == "-rp") {
         selector = new RandomPermutation();
-    }
-    else if(selectorMethod == "--random-permutation-descent" || selectorMethod == "-rpd"){
+    } else if (selectorMethod == "--random-permutation-descent" || selectorMethod == "-rpd") {
         selector = new RandomPermutationDescent();
-    }
-    else if(selectorMethod == "--greedy" || selectorMethod == "-g"){
+    } else if (selectorMethod == "--greedy" || selectorMethod == "-g") {
         selector = new Greedy();
-    }
-    else{
+    } else {
         selector = new SimpleRandom();
         printf("Selector %s not found, using default: Simple Random\n", selectorMethod.c_str());
     }
