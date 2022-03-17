@@ -67,6 +67,8 @@ int main(int argc, char **argv) {
     printf("Acceptor time taken:    %.5fs\n", atime/CLOCKS_PER_SEC);
     selector->printOperatorCounts();
 
+    writeSolution(puzzlePath, board);
+
     delete acceptor;
     delete selector;
     acceptor = nullptr;

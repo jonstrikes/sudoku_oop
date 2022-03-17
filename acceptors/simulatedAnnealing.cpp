@@ -4,7 +4,7 @@ SimulatedAnnealing::SimulatedAnnealing(boardType &board, Selector &selector) : A
     startingObjective = objective;
     iterationCount = 0;
     worseningIterationCount = 0;
-    improvingIterationCount = 0;
+    iterationCycle = 0;
     restartCount = 0;
     isStuck = false;
 
@@ -34,6 +34,7 @@ int SimulatedAnnealing::process(boardType &board) {
         iterationCount++;
         return objChange;
     }
+
     else if(temperature < TEMPERATURE_THRESHOLD || isStuck){
         std::cout << "RESETING " << std::endl;
         //shuffle board, flushing move history and recalculating objective
@@ -66,11 +67,11 @@ int SimulatedAnnealing::process(boardType &board) {
         startingObjective = objective;
         iterationCount = 0;
 
-        improvingIterationCount++;
+        iterationCycle++;
 
-        if((iterationLimit * improvingIterationCount) % (iterationLimit * 5) == 0){
+        if((iterationLimit * iterationCycle) % (iterationLimit * 5) == 0){
             printf("Iteration: %10d\t Objective: %10d\t Temperature: %10f\n",
-                   iterationLimit * improvingIterationCount, objective, temperature);
+                   iterationLimit * iterationCycle, objective, temperature);
         }
 
         return 0;
@@ -78,6 +79,9 @@ int SimulatedAnnealing::process(boardType &board) {
 }
 
 double SimulatedAnnealing::calculateInitialTemperature(boardType &board, Selector &selector) {
+    if(objective == 0)
+        return 0;
+
     vector<double> samples;
     samples.push_back(objective);
 

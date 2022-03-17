@@ -27,6 +27,7 @@ set(PROJECT_HEADERS
         acceptors/improveOrEqual.h
         acceptors/onlyImprove.h
         acceptors/simulatedAnnealing.h
+        acceptors/adaptiveIterationLimitedThresholdAccepting.h
 
         MoveRecord.h
         board.h)
@@ -57,6 +58,7 @@ set(PROJECT_SOURCES
         acceptors/improveOrEqual.cpp
         acceptors/onlyImprove.cpp
         acceptors/simulatedAnnealing.cpp
+        acceptors/adaptiveIterationLimitedThresholdAccepting.cpp
 
         MoveRecord.cpp
         board.cpp

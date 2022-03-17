@@ -1,0 +1,13 @@
+#!/bin/bash
+
+for order in 3 #4 5
+do
+  for p in `seq 0 5 100`
+  do
+    for i in {1..5} #{1..20}
+    do
+      echo "benchmark_puzzles/benchmarks${order}x${order}/${p}/puzzle${i}.txt"
+      ./cmake-build-release/sudoku_oop.exe ./cmake-build-release/benchmark_puzzles/benchmarks${order}x${order}/"${p}"/puzzle${i}.txt output.txt answer.txt -sa -sr
+    done
+  done
+done

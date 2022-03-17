@@ -6,12 +6,16 @@
 #include <cstring>
 #include <cstdlib>
 #include <cerrno>
+#include <filesystem>
+#include <string>
+
 #include "board.h"
 
 #include "models/selector.h"
 #include "acceptors/improveOrEqual.h"
 #include "acceptors/onlyImprove.h"
 #include "acceptors/simulatedAnnealing.h"
+#include "acceptors/adaptiveIterationLimitedThresholdAccepting.h"
 
 #include "selectors/simpleRandom.h"
 #include "selectors/randomDescent.h"
@@ -25,5 +29,7 @@ bool readCMDParams(char **input, int size, std::string& puzzleDir, std::string& 
 bool readCMDOptionalParams(char **input, int size, std::string& acceptorType, std::string& selectorType);
 void readAcceptorMethod(const std::string& acceptorMethod, Acceptor *&acceptor, Selector *&selector, boardType &board);
 void readSelectorMethod(const std::string& selectorMethod, Selector *&selector);
+
+void writeSolution(const std::string& inputPath, boardType &board);
 
 #endif //SUDOKU_OOP_SUDOKUIO_H

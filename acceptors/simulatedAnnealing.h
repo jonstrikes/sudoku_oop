@@ -18,7 +18,7 @@ private:
     int iterationCount;
     int iterationLimit;
     int worseningIterationCount;
-    int improvingIterationCount;
+    int iterationCycle;
     int restartCount;
     int startingObjective;
 

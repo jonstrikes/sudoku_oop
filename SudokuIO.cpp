@@ -70,9 +70,9 @@ void readAcceptorMethod(const std::string &acceptorMethod, Acceptor *&acceptor, 
     } else if (acceptorMethod == "--simulated-annealing" || acceptorMethod == "-sa") {
         acceptor = new SimulatedAnnealing(board, *selector);
     }
-//    else if(acceptorMethod == "--great-deluge" || acceptorMethod == "-gd"){
-//        acceptor = new GreatDeluge(board);
-//    }
+    else if(acceptorMethod == "--adaptive-iteration-limited-threshold-accepting" || acceptorMethod == "-ailta"){
+        acceptor = new AdaptiveIterationLimitedThresholdAccepting(board);
+    }
 //    else if(acceptorMethod == "--late-acceptance" || acceptorMethod == "-la"){
 //        acceptor = new LateAcceptance(board);
 //    }
@@ -97,4 +97,29 @@ void readSelectorMethod(const std::string &selectorMethod, Selector *&selector) 
         selector = new SimpleRandom();
         printf("Selector %s not found, using default: Simple Random\n", selectorMethod.c_str());
     }
+}
+
+void writeSolution(const string& inputPath, boardType &board){
+    //remove extension from input file path
+    string path = inputPath.substr(0, inputPath.find_last_of('.'));
+    string fileName = inputPath.substr(inputPath.find_last_of('/'), inputPath.find_last_of('.'));
+    //mirror path for output
+    std::filesystem::create_directories("./program-output/" + inputPath);
+    //create and open
+    std::ofstream solution;
+    solution.open ("./program-output/" + inputPath + "/" + fileName + "_sol.txt");
+
+    //write order and min value as standard format
+    solution << board.n << "\n";
+    solution << board.minCellValue << "\n";
+
+    //write out board;
+    for(int i=0; i<board.N; i++){
+        for(int j=0; j<board.N; j++){
+            solution << board.board[i][j] << " ";
+        }
+        solution << "\n";
+    }
+
+    solution.close();
 }
