@@ -198,7 +198,7 @@ void writeAcceptorLog(boardType &board, Acceptor *&acceptor, const std::string &
 }
 
 void writeGeneralLog(boardType &board, Selector *&selector, Acceptor *&acceptor, string selectorMethod,
-                     string acceptorMethod, std::string fileName, double timeTaken, double iterationsPerSecond){
+                     string acceptorMethod, std::string fileName, bool isSolved, double timeTaken, double iterationsPerSecond){
 
     std::string generalPath = "./program-output/experiments" + std::to_string(board.n) + "x" + std::to_string(board.n) +
                               "/" + acceptorMethod + "_" + selectorMethod + "/";
@@ -215,6 +215,7 @@ void writeGeneralLog(boardType &board, Selector *&selector, Acceptor *&acceptor,
 
         //write data
         generalLog << fileName << " ";
+        generalLog << isSolved << " ";
         generalLog << std::fixed << timeTaken << " ";
         generalLog << std::fixed << selector->getIterations() << " ";
         if(_isnan(iterationsPerSecond) || std::isinf(iterationsPerSecond) || selector->getIterations() < 1000)
