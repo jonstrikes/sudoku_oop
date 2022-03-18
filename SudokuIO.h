@@ -48,6 +48,6 @@ void writeAcceptorLog(boardType &board, Acceptor *&acceptor, const std::string &
                       const std::string &runId);
 
 void writeGeneralLog(boardType &board, Selector *&selector, Acceptor *&acceptor, std::string selectorMethod,
-                     std::string acceptorMethod, std::string fileName, double timeTaken, double iterationsPerSecond);
+                     std::string acceptorMethod, std::string fileName, bool isSolved, double timeTaken, double iterationsPerSecond);
 
 #endif //SUDOKU_OOP_SUDOKUIO_H
