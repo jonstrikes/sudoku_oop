@@ -59,6 +59,9 @@ int main(int argc, char **argv) {
     board.printBoard();
     board.verifySolved();
 
+    double timeTaken = (double)(clock() - tStart)/CLOCKS_PER_SEC;
+    double iterationsPerSecond = iterations/((double)(clock() - tStart)/CLOCKS_PER_SEC);
+
     printf("\nTotal iterations:     %d\n", selector->getIterations());
     printf("Iterations per second:  %.2f\n", iterations/((double)(clock() - tStart)/CLOCKS_PER_SEC));
     printf("Time taken:             %.2fs\n", (double)(clock() - tStart)/CLOCKS_PER_SEC);
@@ -67,7 +70,14 @@ int main(int argc, char **argv) {
     printf("Acceptor time taken:    %.5fs\n", atime/CLOCKS_PER_SEC);
     selector->printOperatorCounts();
 
-    writeSolution(puzzlePath, board);
+
+    std::string outputPath, fileName, runId;
+    prepareOutput(puzzlePath, outputPath, fileName, runId, selectorMethod, acceptorMethod);
+
+    writeSolution(board, outputPath, fileName, runId);
+    writeGeneralLog(board, selector, acceptor, selectorMethod, acceptorMethod, fileName, timeTaken, iterationsPerSecond);
+    writeSelectorLog(board, selector, outputPath, fileName, runId);
+    writeAcceptorLog(board, acceptor, outputPath, fileName, runId);
 
     delete acceptor;
     delete selector;

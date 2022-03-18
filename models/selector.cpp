@@ -36,6 +36,25 @@ void Selector::printOperatorCounts() {
     printf("CPOExchange: %.5f\n", timesSpent[3]/useCounts[3]);
 }
 
+std::string Selector::getLog(){
+    std::string res = std::to_string(iterations) + "\n";
+
+    for(int i=0; i<operators.size(); i++){
+        res += std::to_string(useCounts[i]) + " ";
+    }
+    res += "\n";
+
+    for(int i=0; i<operators.size(); i++){
+        if(useCounts[i] == 0){
+            res += "0 ";
+        }else{
+            res += std::to_string(timesSpent[i]/useCounts[i]) + " ";
+        }
+    }
+
+    return res;
+}
+
 int Selector::getIterations() {
     return iterations;
 }

@@ -12,6 +12,8 @@ public:
     virtual ~Acceptor() {};
     virtual int process(boardType &board) = 0;
     [[nodiscard]] bool isSolved() const;
+
+    std::string getLog();
 };
 
 #endif //SUDOKU_OOP_ACCEPTOR_H

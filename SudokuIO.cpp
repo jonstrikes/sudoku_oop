@@ -69,8 +69,7 @@ void readAcceptorMethod(const std::string &acceptorMethod, Acceptor *&acceptor, 
         acceptor = new ImproveOrEqual(board);
     } else if (acceptorMethod == "--simulated-annealing" || acceptorMethod == "-sa") {
         acceptor = new SimulatedAnnealing(board, *selector);
-    }
-    else if(acceptorMethod == "--adaptive-iteration-limited-threshold-accepting" || acceptorMethod == "-ailta"){
+    } else if (acceptorMethod == "--adaptive-iteration-limited-threshold-accepting" || acceptorMethod == "-ailta") {
         acceptor = new AdaptiveIterationLimitedThresholdAccepting(board);
     }
 //    else if(acceptorMethod == "--late-acceptance" || acceptorMethod == "-la"){
@@ -99,27 +98,136 @@ void readSelectorMethod(const std::string &selectorMethod, Selector *&selector) 
     }
 }
 
-void writeSolution(const string& inputPath, boardType &board){
+void prepareOutput(const string &inputPath, string &outputPath, string &fileName, string &runId,
+                   const string selectorMethod, const string acceptorMethod) {
     //remove extension from input file path
-    string path = inputPath.substr(0, inputPath.find_last_of('.'));
-    string fileName = inputPath.substr(inputPath.find_last_of('/'), inputPath.find_last_of('.'));
-    //mirror path for output
-    std::filesystem::create_directories("./program-output/" + inputPath);
-    //create and open
-    std::ofstream solution;
-    solution.open ("./program-output/" + inputPath + "/" + fileName + "_sol.txt");
+    string path = inputPath.substr(0, inputPath.find_last_of('/'));
 
-    //write order and min value as standard format
-    solution << board.n << "\n";
-    solution << board.minCellValue << "\n";
+    //extract file name and extension from input path
+    string name = inputPath.substr(inputPath.find_last_of('/'), inputPath.find_last_of('.'));
+    string extension = name.substr(name.find_last_of('.') + 1, name.size());
+    fileName = name.substr(1, name.find_last_of('.') - 1);
 
-    //write out board;
-    for(int i=0; i<board.N; i++){
-        for(int j=0; j<board.N; j++){
-            solution << board.board[i][j] << " ";
-        }
-        solution << "\n";
+    //mirror output path to match input and append hyper-heuristic name used and experiment id
+    outputPath = "./program-output/" + path + "/" + acceptorMethod + "_" + selectorMethod + "/" + fileName;
+
+    //generate unique run id to avoid overwriting existing experiment data
+    int uniqueId = 0;
+    while (std::filesystem::exists(outputPath + "/" + std::to_string(uniqueId)) ||
+           std::filesystem::is_directory(outputPath + "/" + std::to_string(uniqueId))) {
+        uniqueId++;
     }
-
-    solution.close();
+    runId = std::to_string(uniqueId);
 }
+
+void writeSolution(boardType &board, const string &outputPath, const string &fileName, const string &runId) {
+    try {
+        //mirror path for output
+        if (!std::filesystem::is_directory(outputPath + "/" + runId) ||
+            !std::filesystem::exists(outputPath + "/" + runId)) {
+            std::filesystem::create_directories(outputPath + "/" + runId);
+        }
+
+        //create/overwrite and open
+        std::ofstream solution;
+        solution.open(outputPath + "/" + runId + "/" + fileName + "_sol.txt", std::ofstream::trunc);
+
+        //write order and min value as standard format
+        solution << board.n << "\n";
+        solution << board.minCellValue << "\n";
+
+        //write out board;
+        for (int i = 0; i < board.N; i++) {
+            for (int j = 0; j < board.N; j++) {
+                solution << board.board[i][j] << " ";
+            }
+            solution << "\n";
+        }
+
+        solution.close();
+
+    } catch (std::filesystem::filesystem_error const &ex) {
+        printf("%s", ex.what());
+    }
+}
+
+void writeSelectorLog(boardType &board, Selector *&selector, const std::string &outputPath, const std::string &fileName,
+                      const std::string &runId) {
+    //maybe make all experiments write general data into a single file
+    try {
+        //mirror path for output
+        if (!std::filesystem::is_directory(outputPath + "/" + runId) ||
+            !std::filesystem::exists(outputPath + "/" + runId)) {
+            std::filesystem::create_directories(outputPath + "/" + runId);
+        }
+
+        //create/overwrite and open
+        std::ofstream selectorLog;
+        selectorLog.open(outputPath + "/" + runId + "/" + fileName + "_sel.txt", std::ofstream::trunc);
+
+        //write selector data
+        selectorLog << selector->getLog();
+        //close output
+        selectorLog.close();
+    } catch (std::filesystem::filesystem_error const &ex) {
+        printf("%s", ex.what());
+    }
+}
+
+void writeAcceptorLog(boardType &board, Acceptor *&acceptor, const std::string &outputPath, const std::string &fileName,
+                      const std::string &runId) {
+    try {
+        //mirror path for output
+        if (!std::filesystem::is_directory(outputPath + "/" + runId) ||
+            !std::filesystem::exists(outputPath + "/" + runId)) {
+            std::filesystem::create_directories(outputPath + "/" + runId);
+        }
+
+        //create/overwrite and open
+        std::ofstream acceptorLog;
+        acceptorLog.open(outputPath + "/" + runId + "/" + fileName + "_acc.txt", std::ofstream::trunc);
+
+        //write acceptor data
+        acceptorLog << acceptor->getLog();
+        //close output
+        acceptorLog.close();
+
+    } catch (std::filesystem::filesystem_error const &ex) {
+        printf("%s", ex.what());
+    }
+}
+
+void writeGeneralLog(boardType &board, Selector *&selector, Acceptor *&acceptor, string selectorMethod,
+                     string acceptorMethod, std::string fileName, double timeTaken, double iterationsPerSecond){
+
+    std::string generalPath = "./program-output/experiments" + std::to_string(board.n) + "x" + std::to_string(board.n) +
+                              "/" + acceptorMethod + "_" + selectorMethod + "/";
+    try {
+        //mirror path for output
+        if (!std::filesystem::is_directory(generalPath) ||
+            !std::filesystem::exists(generalPath)) {
+            std::filesystem::create_directories(generalPath);
+        }
+
+        //create or open log file
+        std::ofstream generalLog;
+        generalLog.open(generalPath + "all_experiments_log.txt", std::fstream::app);
+
+        //write data
+        generalLog << fileName << " ";
+        generalLog << std::fixed << timeTaken << " ";
+        generalLog << std::fixed << selector->getIterations() << " ";
+        if(_isnan(iterationsPerSecond) || std::isinf(iterationsPerSecond) || selector->getIterations() < 1000)
+            generalLog << 0.0 << " ";
+        else
+            generalLog << std::fixed << iterationsPerSecond << " ";
+        generalLog << "\n";
+
+        //close output
+        generalLog.close();
+
+    } catch (std::filesystem::filesystem_error const &ex) {
+        printf("%s", ex.what());
+    }
+}
+
