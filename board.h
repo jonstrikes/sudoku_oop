@@ -31,7 +31,7 @@ struct boardType {
     boardType(int n, int N, int minCellValue, int maxCellValue,
               vector<vector<int>> board, vector<vector<int>> fixed);
 
-    void printBoard();
+    std::string printBoard();
 
     //checks if there are moves recorded in history
     bool hasChange();

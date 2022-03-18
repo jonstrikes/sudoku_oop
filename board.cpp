@@ -14,7 +14,7 @@ boardType::boardType(int n, int N, int minCellValue, int maxCellValue,
     colObjectives = vector<uint_fast8_t>(N);
 }
 
-void boardType::printBoard() {
+string boardType::printBoard() {
     string result;
     for (int row = 0; row < N; row++) {
         if (row != 0 && row % int(sqrt(N)) == 0) {
@@ -35,6 +35,8 @@ void boardType::printBoard() {
         result += "\n";
     }
     std::cout << result << std::endl;
+
+    return result;
 }
 
 string boardType::cellToString(int value) {
