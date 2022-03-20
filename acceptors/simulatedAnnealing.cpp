@@ -17,42 +17,7 @@ SimulatedAnnealing::SimulatedAnnealing(boardType &board, Selector &selector) : A
 }
 
 int SimulatedAnnealing::process(boardType &board) {
-    if(iterationCount < iterationLimit) {
-        //std::cout << "EVALUATING " << std::endl;
-        int objChange = board.updateObjective();
-        double prob = pow(2.718282, (-objChange / temperature));
-
-        if (objChange <= 0 || prob > (fastrand() / double(RAND_MAX))) {
-            //std::cout << "accepted " << objChange << " with probability " << prob << std::endl;
-            objective += objChange;
-            board.acceptChange();
-        } else {
-            //std::cout << "rejected " << objChange << std::endl;
-            board.undoChange();
-        }
-
-        iterationCount++;
-        return objChange;
-    }
-
-    else if(temperature < TEMPERATURE_THRESHOLD || isStuck){
-        std::cout << "RESETING " << std::endl;
-        //shuffle board, flushing move history and recalculating objective
-        board.randomiseExistingSolution();
-        board.acceptChange();
-        int objChange = board.calculateObjective() - objective;
-
-        //update local variables
-        objective = board.calculateObjective();
-
-        restartCount++;
-        temperature = initialTemperature;
-        iterationCount = 0;
-        isStuck = false;
-
-        return objChange;
-    }
-    else{
+    if(iterationCount >= iterationLimit) {
         //std::cout << "UPDATING TEMP " << std::endl;
         //increment or reset bad markov chain count
         worseningIterationCount = objective >= startingObjective ? worseningIterationCount + 1 : 0;
@@ -73,8 +38,40 @@ int SimulatedAnnealing::process(boardType &board) {
             printf("Iteration: %10d\t Objective: %10d\t Temperature: %10f\n",
                    iterationLimit * iterationCycle, objective, temperature);
         }
+    }
 
-        return 0;
+    if(temperature < TEMPERATURE_THRESHOLD || isStuck){
+        std::cout << "RESETING " << std::endl;
+        //shuffle board, flushing move history and recalculating objective
+        board.randomiseExistingSolution();
+        int objChange = board.calculateObjective() - objective;
+
+        //update local variables
+        objective = board.calculateObjective();
+
+        restartCount++;
+        temperature = initialTemperature;
+        iterationCount = 0;
+        isStuck = false;
+
+        return objChange;
+    }
+    else{
+        //std::cout << "EVALUATING " << std::endl;
+        int objChange = board.updateObjective();
+        double prob = pow(2.718282, (-objChange / temperature));
+
+        if (objChange <= 0 || prob > (fastrand() / double(RAND_MAX))) {
+            //std::cout << "accepted " << objChange << " with probability " << prob << std::endl;
+            objective += objChange;
+            board.acceptChange();
+        } else {
+            //std::cout << "rejected " << objChange << std::endl;
+            board.undoChange();
+        }
+
+        iterationCount++;
+        return objChange;
     }
 }
 
