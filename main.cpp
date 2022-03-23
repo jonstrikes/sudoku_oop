@@ -1,6 +1,7 @@
 #include <string>
 
 #include "SudokuIO.h"
+#include "procedures/cpProcedure.h"
 #include <ctime>
 
 int main(int argc, char **argv) {
@@ -22,7 +23,21 @@ int main(int argc, char **argv) {
     //scan board and generate initial guess solution
     boardType board = readFile(puzzlePath);
     board.printBoard();
+
+    cpProcedure(board, 1);
+    board.printBoard();
+
     board.generateInitialSolution();
+    board.printBoard();
+
+    std::cout << board.calculateObjective() << "\n";
+
+    for(int i=0; i<board.N; i++){
+        for(int j=0; j<board.N; j++){
+            std::cout << board.fixed[i][j] << " ";
+        }
+        std::cout << "\n";
+    }
 
     //initialise specified hyper-heuristic
     Selector *selector;
@@ -31,7 +46,6 @@ int main(int argc, char **argv) {
     readAcceptorMethod(acceptorMethod, acceptor, selector, board);
 
     clock_t tStart = clock();
-
     double stime = 0, atime = 0;
 
     int iterationLimit = 1000000;
@@ -42,6 +56,7 @@ int main(int argc, char **argv) {
 //        if(iterations > iterationLimit)
 //            break;
         iterations++;
+
         //move selection
             clock_t sStart = clock();
         selector->select(board);

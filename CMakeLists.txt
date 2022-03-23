@@ -29,6 +29,9 @@ set(PROJECT_HEADERS
         acceptors/simulatedAnnealing.h
         acceptors/adaptiveIterationLimitedThresholdAccepting.h
 
+        #procedures
+        procedures/cpProcedure.h
+
         MoveRecord.h
         board.h)
 
@@ -59,6 +62,9 @@ set(PROJECT_SOURCES
         acceptors/onlyImprove.cpp
         acceptors/simulatedAnnealing.cpp
         acceptors/adaptiveIterationLimitedThresholdAccepting.cpp
+
+        #procedures
+        procedures/cpProcedure.cpp
 
         MoveRecord.cpp
         board.cpp

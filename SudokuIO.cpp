@@ -19,7 +19,7 @@ boardType readFile(const string &fileDir) {
 
     //initialise grid and fixed
     vector<vector<int>> grid(N, vector<int>(N));
-    vector<vector<int>> fixed(N, vector<int>(N));
+    vector<vector<bool>> fixed(N, vector<bool>(N));
 
     //all benchmark files contain one puzzle
     for (int row = 0; row < N; row++) {

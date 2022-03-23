@@ -3,7 +3,7 @@
 using std::string;
 
 boardType::boardType(int n, int N, int minCellValue, int maxCellValue,
-                     vector<vector<int>> board, vector<vector<int>> fixed) :
+                     vector<vector<int>> board, vector<vector<bool>> fixed) :
         n(n), N(N),
         minCellValue(minCellValue), maxCellValue(maxCellValue),
         board(std::move(board)), fixed(std::move(fixed)),
@@ -256,6 +256,8 @@ bool boardType::verifySolved() {
 }
 
 void boardType::randomiseExistingSolution() {
+    moveRecord.clear();
+
     for (int br = 0; br < n; br++) {
         for (int bc = 0; bc < n; bc++) {
             //initialise missing values to all possible values
@@ -292,6 +294,64 @@ void boardType::randomiseExistingSolution() {
 
         }
     }
+}
+
+std::set<std::pair<uint_fast8_t , uint_fast8_t>> boardType::getConflictingCells() {
+    std::set<std::pair<uint_fast8_t, uint_fast8_t>> conflictingCells;
+
+    std::vector<bool> encounteredAlongRow(N);
+    std::vector<bool> isDuplicateInRow(N);
+
+    std::vector<bool> encounteredAlongCol(N);
+    std::vector<bool> isDuplicateInCol(N);
+
+    for(int i=0; i<N; i++){
+        if(rowObjectives[i] == 0)
+            goto check_columns;
+
+        //mark duplicate values in rows
+        for(int j=0; j<N; j++) {
+            if(encounteredAlongRow[board[i][j]])
+                isDuplicateInRow[board[i][j]] = true;
+            encounteredAlongRow[board[i][j]] = true;
+        }
+
+        //collect conflicting cells along rows
+        for(int j=0; j<N; j++) {
+            if(isDuplicateInRow[board[i][j]] && !fixed[i][j]){
+                conflictingCells.insert(std::make_pair(i,j));
+            }
+        }
+
+        //reset work vectors for rows
+        encounteredAlongRow.assign(N, false);
+        isDuplicateInRow.assign(N, false);
+
+        //now check columns
+        check_columns:
+        if(colObjectives[i] == 0)
+            continue;
+
+        //mark duplicate values in cols
+        for(int j=0; j<N; j++) {
+            if(encounteredAlongCol[board[j][i]])
+                isDuplicateInCol[board[j][i]] = true;
+            encounteredAlongCol[board[j][i]] = true;
+        }
+
+        //collect conflicting cells along cols
+        for(int j=0; j<N; j++) {
+            if(isDuplicateInCol[board[j][i]] && !fixed[j][i]){
+                conflictingCells.insert(std::make_pair(j,i));
+            }
+        }
+
+        //reset work vectors for cols
+        encounteredAlongCol.assign(N, false);
+        isDuplicateInCol.assign(N, false);
+    }
+
+    return conflictingCells;
 }
 
 

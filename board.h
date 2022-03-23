@@ -8,6 +8,7 @@
 #include <random>
 #include <algorithm>
 #include <ctime>
+#include <set>
 
 #include "MoveRecord.h"
 
@@ -21,7 +22,7 @@ struct boardType {
     int maxCellValue;
 
     vector<vector<int>> board;
-    vector<vector<int>> fixed;
+    vector<vector<bool>> fixed;
 
     vector<uint_fast8_t> rowObjectives;
     vector<uint_fast8_t> colObjectives;
@@ -29,7 +30,7 @@ struct boardType {
     MoveRecord moveRecord;
 
     boardType(int n, int N, int minCellValue, int maxCellValue,
-              vector<vector<int>> board, vector<vector<int>> fixed);
+              vector<vector<int>> board, vector<vector<bool>> fixed);
 
     std::string printBoard();
 
@@ -59,6 +60,8 @@ struct boardType {
 
     //verifies if the board is a correct solution
     bool verifySolved();
+
+    std::set<std::pair<uint_fast8_t, uint_fast8_t>> getConflictingCells();
 
 private:
     static std::string cellToString(int cell);

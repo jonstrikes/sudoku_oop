@@ -10,7 +10,6 @@ std::vector<MoveData>& MoveRecord::getChange() {
 }
 
 void MoveRecord::clear() {
-    change.clear();
     isEmpty = true;
 }
 
