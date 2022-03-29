@@ -10,9 +10,12 @@ protected:
 public:
     explicit Acceptor(boardType &board);
     virtual ~Acceptor() {};
-    virtual int process(boardType &board) = 0;
-    [[nodiscard]] bool isSolved() const;
 
+    virtual int process(boardType &board) = 0;
+
+    [[nodiscard]] bool isSolved() const;
+    virtual int recalculateObjective(boardType &board);
+    int getObjective();
     std::string getLog();
 };
 

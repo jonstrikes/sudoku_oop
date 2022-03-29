@@ -20,7 +20,6 @@ set(PROJECT_HEADERS
         selectors/randomDescent.h
         selectors/randomPermutation.h
         selectors/randomPermutationDescent.h
-        selectors/greedy.h
 
         #acceptors
         models/acceptor.h
@@ -54,7 +53,6 @@ set(PROJECT_SOURCES
         selectors/randomDescent.cpp
         selectors/randomPermutation.cpp
         selectors/randomPermutationDescent.cpp
-        selectors/greedy.cpp
 
         #acceptors
         models/acceptor.cpp

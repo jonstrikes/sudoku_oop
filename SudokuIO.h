@@ -21,7 +21,6 @@
 #include "selectors/randomDescent.h"
 #include "selectors/randomPermutation.h"
 #include "selectors/randomPermutationDescent.h"
-#include "selectors/greedy.h"
 
 //input functions
 boardType readFile(const std::string &fileDir);

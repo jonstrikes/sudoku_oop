@@ -7,7 +7,7 @@ boardType::boardType(int n, int N, int minCellValue, int maxCellValue,
         n(n), N(N),
         minCellValue(minCellValue), maxCellValue(maxCellValue),
         board(std::move(board)), fixed(std::move(fixed)),
-        moveRecord()
+        moveRecord(), encounteredAlongRow(N), encounteredAlongCol(N)
 {
     //initialise column and row objective containers
     rowObjectives = vector<uint_fast8_t>(N);
@@ -81,7 +81,7 @@ void boardType::acceptChange() {
     moveRecord.clear();
 }
 
-void boardType::generateInitialSolution() {
+void boardType::generateSolution() {
     for (int br = 0; br < n; br++) {
         for (int bc = 0; bc < n; bc++) {
             //initialise missing values to all possible values
@@ -101,16 +101,6 @@ void boardType::generateInitialSolution() {
             //do nothing if block has no empty cells
             if (missing.empty())
                 continue;
-
-            //complete block with a single empty cell
-            if (missing.size() == 1) {
-                for (int r = br * n; r < (br + 1) * n; r++) {
-                    for (int c = bc * n; c < (bc + 1) * n; c++) {
-                        //fix every cell
-                        fixed[r][c] = true;
-                    }
-                }
-            }
 
             //shuffle missing values
             std::shuffle(missing.begin(), missing.end(), std::mt19937(std::time(nullptr)));
@@ -166,8 +156,6 @@ int boardType::updateObjective() {
     if (moveRecord.empty())
         return 0;
 
-    std::vector<bool> encounteredAlongRow(N);
-    std::vector<bool> encounteredAlongCol(N);
     int change = 0;
 
     //this may calculate rows and cols multiple times
@@ -258,51 +246,22 @@ bool boardType::verifySolved() {
 void boardType::randomiseExistingSolution() {
     moveRecord.clear();
 
-    for (int br = 0; br < n; br++) {
-        for (int bc = 0; bc < n; bc++) {
-            //initialise missing values to all possible values
-            vector<int> missing;
-            int value = minCellValue;
-            for (int i = 0; i < N; i++, value++) missing.push_back(value);
-
-            //collect missing values from current block
-            for (int r = br * n; r < (br + 1) * n; r++) {
-                for (int c = bc * n; c < (bc + 1) * n; c++) {
-                    if (fixed[r][c]) continue;
-                    //remove encountered cell values, leaving the missing values
-                    missing.erase(std::remove(missing.begin(), missing.end(), board[r][c]), missing.end());
-                }
+    for (int i = 0; i < N; ++i) {
+        for (int j = 0; j < N; ++j) {
+            if(!fixed[i][j]){
+                board[i][j] = -1;
             }
-
-            //do nothing if block has no empty cells
-            if (missing.empty())
-                continue;
-
-            //shuffle missing values
-            std::shuffle(missing.begin(), missing.end(), std::mt19937(std::time(nullptr)));
-            //fill in missing values
-            for (int r = br * n; r < (br + 1) * n; r++) {
-                for (int c = bc * n; c < (bc + 1) * n; c++) {
-                    //skip non-empty cells
-                    if (board[r][c] != -1)
-                        continue;
-
-                    board[r][c] = missing.back();
-                    missing.pop_back();
-                }
-            }
-
         }
     }
+    printBoard();
+
+    generateSolution();
 }
 
 std::set<std::pair<uint_fast8_t , uint_fast8_t>> boardType::getConflictingCells() {
     std::set<std::pair<uint_fast8_t, uint_fast8_t>> conflictingCells;
 
-    std::vector<bool> encounteredAlongRow(N);
     std::vector<bool> isDuplicateInRow(N);
-
-    std::vector<bool> encounteredAlongCol(N);
     std::vector<bool> isDuplicateInCol(N);
 
     for(int i=0; i<N; i++){
@@ -352,6 +311,46 @@ std::set<std::pair<uint_fast8_t , uint_fast8_t>> boardType::getConflictingCells(
     }
 
     return conflictingCells;
+}
+
+void boardType::fixBlocksWithSingleCellMissing() {
+    for (int br = 0; br < n; br++) {
+        for (int bc = 0; bc < n; bc++) {
+            //initialise missing values to all possible values
+            int unfixedCount = 0;
+            vector<int> missing;
+
+            int value = minCellValue;
+            for (int i = 0; i < N; i++, value++) missing.push_back(value);
+
+            //collect missing values from current block
+            for (int r = br * n; r < (br + 1) * n; r++) {
+                for (int c = bc * n; c < (bc + 1) * n; c++) {
+                    if (board[r][c] == -1) {
+                        unfixedCount++;
+                        continue;
+                    }
+                    else if(!fixed[r][c]){
+                        unfixedCount++;
+                    }
+                    //remove encountered cell values, leaving the missing values
+                    missing.erase(std::remove(missing.begin(), missing.end(), board[r][c]), missing.end());
+                }
+            }
+
+            if (unfixedCount == 1) {
+                for (int r = br * n; r < (br + 1) * n; r++) {
+                    for (int c = bc * n; c < (bc + 1) * n; c++) {
+                        if(!fixed[r][c]) {
+                            board[r][c] = missing.back();
+                            fixed[r][c] = true;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
 }
 
 

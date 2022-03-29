@@ -13,3 +13,12 @@ std::string Acceptor::getLog() {
 
     return res;
 }
+
+int Acceptor::recalculateObjective(boardType &board) {
+    objective = board.calculateObjective();
+    return objective;
+}
+
+int Acceptor::getObjective() {
+    return objective;
+}

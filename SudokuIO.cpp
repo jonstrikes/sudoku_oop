@@ -40,8 +40,8 @@ bool readCMDParams(char **input, int size, std::string &puzzleDir,
         printf("Sudoku Solver\n");
         printf("Usage: PuzzlePath OutputFile SolutionFile -acceptor -selector\n");
         printf("If either the acceptor or selector is not specified, the program defaults to Simple Random and Improve or Equal\n");
-        printf("Acceptors: -oi, -ie, -sa, -gd, -la\n");
-        printf("Selectors: -sr, -rd, -rp, -rpd, -g\n");
+        printf("Acceptors: -oi, -ie, -sa, -ailta\n");
+        printf("Selectors: -sr, -rd, -rp, -rpd\n");
         return false;
     }
 
@@ -72,9 +72,6 @@ void readAcceptorMethod(const std::string &acceptorMethod, Acceptor *&acceptor, 
     } else if (acceptorMethod == "--adaptive-iteration-limited-threshold-accepting" || acceptorMethod == "-ailta") {
         acceptor = new AdaptiveIterationLimitedThresholdAccepting(board);
     }
-//    else if(acceptorMethod == "--late-acceptance" || acceptorMethod == "-la"){
-//        acceptor = new LateAcceptance(board);
-//    }
     else {
         acceptor = new ImproveOrEqual(board);
         printf("Acceptor %s not found, using default: Improve or Equal\n", acceptorMethod.c_str());
@@ -90,8 +87,6 @@ void readSelectorMethod(const std::string &selectorMethod, Selector *&selector) 
         selector = new RandomPermutation();
     } else if (selectorMethod == "--random-permutation-descent" || selectorMethod == "-rpd") {
         selector = new RandomPermutationDescent();
-    } else if (selectorMethod == "--greedy" || selectorMethod == "-g") {
-        selector = new Greedy();
     } else {
         selector = new SimpleRandom();
         printf("Selector %s not found, using default: Simple Random\n", selectorMethod.c_str());

@@ -29,6 +29,9 @@ struct boardType {
 
     MoveRecord moveRecord;
 
+    vector<bool> encounteredAlongRow;
+    vector<bool> encounteredAlongCol;
+
     boardType(int n, int N, int minCellValue, int maxCellValue,
               vector<vector<int>> board, vector<vector<bool>> fixed);
 
@@ -47,7 +50,9 @@ struct boardType {
     void acceptChange();
 
     //generates an initial solution or randomly reassigns an existing one
-    void generateInitialSolution();
+    void generateSolution();
+
+    void fixBlocksWithSingleCellMissing();
 
     //shuffles the unfixed cells of the current solution
     void randomiseExistingSolution();

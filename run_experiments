@@ -1,13 +1,22 @@
 #!/bin/bash
 
-for order in 3 #4 5
+declare -a acceptors=( "-ioe" "-oi" "-sa" "-ailta")
+declare -a selectors=("-rd" "-rp" "-rpd" "-sr")
+
+for acc in "${acceptors[@]}"
 do
-  for p in `seq 0 5 100`
+  for sel in "${selectors[@]}"
   do
-    for i in {1..5} #{1..20}
+    for order in 4 #4 5
     do
-      echo "benchmark_puzzles/benchmarks${order}x${order}/${p}/puzzle${i}.txt"
-      ./cmake-build-release/sudoku_oop.exe ./cmake-build-release/benchmark_puzzles/benchmarks${order}x${order}/"${p}"/puzzle${i}.txt output.txt answer.txt -sa -sr
+      for p in `seq 0 5 100`
+      do
+        for i in {1..5} #{1..20}
+        do
+          echo "benchmark_puzzles/benchmarks${order}x${order}/${p}/puzzle${i}.txt"
+          ./cmake-build-release/sudoku_oop.exe ./cmake-build-release/benchmark_puzzles/benchmarks${order}x${order}/"${p}"/puzzle${i}.txt output.txt answer.txt "$acc" "$sel"
+        done
+      done
     done
   done
 done

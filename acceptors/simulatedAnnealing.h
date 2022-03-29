@@ -12,6 +12,7 @@ private:
     const int WORSENING_ITERATION_LIMIT = 30;
     const double COOL_RATE = 0.99;
     const double TEMPERATURE_THRESHOLD = 0.000001;
+    Selector &selector;
 
     double temperature;
     double initialTemperature;
@@ -24,12 +25,12 @@ private:
 
     bool isStuck;
 
-    double calculateInitialTemperature(boardType &board, Selector &selector);
+    double calculateTemperature(boardType &board);
     int calculateIterationLimit(boardType &board);
-
 
 public:
     explicit SimulatedAnnealing(boardType &board, Selector &selector);
+    int recalculateObjective(boardType &board) override;
     int process(boardType &board) override;
 };
 
