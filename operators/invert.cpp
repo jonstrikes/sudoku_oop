@@ -14,53 +14,59 @@ void invert(boardType &board) {
         c2 = fastrand() % board.n + c1 / board.n * board.n;
     } while (board.fixed[r2][c2] || (r1 == r2 && c1 == c2));
 
-    int rLeft, cLeft, rRight, cRight, temp;
+    int rUp, cUp, rDown, cDown, temp;
 
     //determine the left and right bounds
-    if (r1 > r2 || r1 == r2 && c1 > c2) {
-        rLeft = r2, cLeft = c2;
-        rRight = r1, cRight = c1;
+    if (r1 > r2 || (r1 == r2 && c1 > c2)) {
+        rUp = r2, cUp = c2;
+        rDown = r1, cDown = c1;
     } else {
-        rLeft = r1, cLeft = c1;
-        rRight = r2, cRight = c2;
+        rUp = r1, cUp = c1;
+        rDown = r2, cDown = c2;
     }
+
+    //printf("starting Left %d:%d Right %d:%d\n", rLeft, cLeft, rRight, cRight);
 
     //invert by swapping pairs of non-fixed cells between the left and right bounds (inclusive)
     // runs until the left and right bounds meet
     std::pair<int, int> coordinates;
-    while (rLeft < rRight || (rLeft == rRight && cLeft < cRight)) {
-        if (board.fixed[rLeft][cLeft]) {
-            coordinates = getNeighbourCoords(true, rLeft, cLeft, board.n);
-            rLeft = coordinates.first;
-            cLeft = coordinates.second;
+    while (rUp < rDown || (rUp == rDown && cUp < cDown)) {
+        if (board.fixed[rUp][cUp]) {
+            coordinates = getBlockRowNeighbourCoords(true, rUp, cUp, board.n);
+            rUp = coordinates.first;
+            cUp = coordinates.second;
             continue;
         }
-        if (board.fixed[rRight][cRight]) {
-            coordinates = getNeighbourCoords(false, rRight, cRight, board.n);
-            rRight = coordinates.first;
-            cRight = coordinates.second;
+        if (board.fixed[rDown][cDown]) {
+            coordinates = getBlockRowNeighbourCoords(false, rDown, cDown, board.n);
+            rDown = coordinates.first;
+            cDown = coordinates.second;
             continue;
         }
 
         //record data of the two cells before swapping
-        moveData.emplace_back(rLeft, cLeft, board.board[rLeft][cLeft], board.rowObjectives[rLeft],
-                              board.colObjectives[cLeft]);
-        moveData.emplace_back(rRight, cRight, board.board[rRight][cRight], board.rowObjectives[rRight],
-                              board.colObjectives[cRight]);
+        moveData.emplace_back(rUp, cUp, board.board[rUp][cUp], board.rowObjectives[rUp],
+                              board.colObjectives[cUp]);
+        moveData.emplace_back(rDown, cDown, board.board[rDown][cDown], board.rowObjectives[rDown],
+                              board.colObjectives[cDown]);
+
+        //printf("swapping %d:%d and %d:%d\n", rUp, cUp, rDown, cDown);
 
         //apply change
-        temp = board.board[rLeft][cLeft];
-        board.board[rLeft][cLeft] = board.board[rRight][cRight];
-        board.board[rRight][cRight] = temp;
+        temp = board.board[rUp][cUp];
+        board.board[rUp][cUp] = board.board[rDown][cDown];
+        board.board[rDown][cDown] = temp;
 
         //find next neighbours
-        coordinates = getNeighbourCoords(true, rLeft, cLeft, board.n);
-        rLeft = coordinates.first;
-        cLeft = coordinates.second;
-        coordinates = getNeighbourCoords(false, rRight, cRight, board.n);
-        rRight = coordinates.first;
-        cRight = coordinates.second;
+        coordinates = getBlockRowNeighbourCoords(true, rUp, cUp, board.n);
+        rUp = coordinates.first;
+        cUp = coordinates.second;
+        coordinates = getBlockRowNeighbourCoords(false, rDown, cDown, board.n);
+        rDown = coordinates.first;
+        cDown = coordinates.second;
     }
+
+    //board.printBoard();
 
     //record starting state
     board.rememberChange(moveData);

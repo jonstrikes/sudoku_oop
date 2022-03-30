@@ -10,8 +10,8 @@ void cpoExchange(boardType &board) {
         c = fastrand() % board.N;
     } while (board.fixed[r][c]);
 
-    std::pair<int, int> left = getNeighbourCoords(false, r, c, board.n);
-    std::pair<int, int> right = getNeighbourCoords(true, r, c, board.n);
+    std::pair<int, int> left = getBlockRowNeighbourCoords(false, r, c, board.n);
+    std::pair<int, int> right = getBlockRowNeighbourCoords(true, r, c, board.n);
     //swap pairs of non-fixed values within the same block around the center point
     // exchanges pairs until fixed value is bumped into or reached the end of sub-block
     while (true) {
@@ -36,8 +36,8 @@ void cpoExchange(boardType &board) {
         board.board[right.first][right.second] = temp;
 
         //get further neighbours
-        left = getNeighbourCoords(false, left.first, left.second, board.n);
-        right = getNeighbourCoords(true, right.first, right.second, board.n);
+        left = getBlockRowNeighbourCoords(false, left.first, left.second, board.n);
+        right = getBlockRowNeighbourCoords(true, right.first, right.second, board.n);
     }
 
     //record previous state

@@ -3,7 +3,8 @@
 
 #include <vector>
 
-std::pair<int, int> getNeighbourCoords(bool rightNeighbour, int r, int c, int n);
+std::pair<int, int> getBlockRowNeighbourCoords(bool rightNeighbour, int r, int c, int n);
+std::pair<int, int> getBlockColNeighbourCoords(bool downNeighbour, int r, int c, int n);
 bool areInSameBlock(int r1, int c1, int r2, int c2, int n);
 bool isWithinBounds(int r, int c, int N);
 

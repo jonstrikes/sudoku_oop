@@ -1,6 +1,6 @@
 #include "boardUtils.h"
 
-std::pair<int, int> getNeighbourCoords(bool rightNeighbour, int r, int c, int n){
+std::pair<int, int> getBlockRowNeighbourCoords(bool rightNeighbour, int r, int c, int n){
     int cNext, rNext;
 
     if(rightNeighbour){
@@ -17,6 +17,28 @@ std::pair<int, int> getNeighbourCoords(bool rightNeighbour, int r, int c, int n)
             rNext = r-1;
         }
         else cNext=c-1, rNext=r;
+    }
+
+    return {rNext, cNext};
+}
+
+std::pair<int, int> getBlockColNeighbourCoords(bool downNeighbour, int r, int c, int n){
+    int cNext, rNext;
+
+    if(downNeighbour){
+        if((r+1) % n == 0){
+            rNext = r+1 - n;
+            cNext = c+1;
+        }
+        else rNext = r+1, cNext=c;
+    }
+    else{
+        //check if need to move to previous col
+        if(r % n == 0){
+            rNext = r-1 + n;
+            cNext = c-1;
+        }
+        else rNext=r-1, cNext=c;
     }
 
     return {rNext, cNext};

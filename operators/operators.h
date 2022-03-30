@@ -10,4 +10,7 @@ void insert(boardType &board);
 void invert(boardType &board);
 void cpoExchange(boardType &board);
 
+void insertSym(boardType &board);
+void invertSym(boardType &board);
+
 #endif //SUDOKU_OOP_OPERATORS_H
