@@ -73,3 +73,10 @@ set(PROJECT_SOURCES
         board.cpp)
 
 add_executable(sudoku_oop ${PROJECT_SOURCES} ${PROJECT_HEADERS})
+
+include(FetchContent)
+
+FetchContent_Declare(json URL https://github.com/nlohmann/json/releases/download/v3.10.5/json.tar.xz)
+FetchContent_MakeAvailable(json)
+
+target_link_libraries(sudoku_oop PRIVATE nlohmann_json::nlohmann_json)

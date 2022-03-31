@@ -7,10 +7,10 @@
 int main(int argc, char **argv) {
     srand(time(nullptr));
 
-    std::string puzzlePath, outputLogFile, solutionFile;
+    std::string puzzlePath;
     std::string acceptorMethod, selectorMethod;
 
-    if (!readCMDParams(argv, argc, puzzlePath, outputLogFile, solutionFile)) {
+    if (!readCMDParams(argv, argc, puzzlePath)) {
         //user input could not be parsed
         return 0;
     } else {
@@ -18,8 +18,7 @@ int main(int argc, char **argv) {
         readCMDOptionalParams(argv, argc, acceptorMethod, selectorMethod);
     }
 
-
-    //scan board and generate initial guess solution
+    //parse board from input
     boardType board = readFile(puzzlePath);
     board.printBoard();
 
@@ -34,6 +33,8 @@ int main(int argc, char **argv) {
     int bestCycleObjective = board.N * board.N; // init to max val
     int lastCycleObjective = board.N * board.N; // init to max val
 
+    int rowConflicts = 0, colConflicts = 0;
+
     int unfixedCount = 0;
     for (auto row : board.fixed) {
         unfixedCount += std::count(row.begin(), row.end(), false);
@@ -41,30 +42,34 @@ int main(int argc, char **argv) {
     int cycleIterations = round(pow(unfixedCount, 2));
     std::cout << "cp will run every " << cycleIterations * 10 << " iterations\n";
 
+    //
     board.fixBlocksWithSingleCellMissing();
     vector<vector<bool>> originalFixedMap(board.fixed);
+
+    //try to fill cell implicitly
     cpProcedure(board, resetFactor);
+    //fill remaining empty cells
     board.generateSolution();
+
+
+    auto specs = readSpecification();
 
     //initialise specified hyper-heuristic
     Selector *selector;
     Acceptor *acceptor;
-    readSelectorMethod(selectorMethod, selector);
+    readSelectorMethod(selectorMethod, specs, selector);
     readAcceptorMethod(acceptorMethod, acceptor, selector, board);
 
+    //start of algorithm
     clock_t tStart = clock();
+    //clock_t tFinish = tStart + (timeLimit*CLOCKS_PER_SEC);
     double stime = 0, atime = 0;
-
-
 
     int iterationLimit = 1000000;
     int iterations = 0;
 
     // isSolved or timout
     while (!acceptor->isSolved()) {
-//    while(iterations < iterationLimit){
-//        if(iterations > iterationLimit)
-//            break;
         iterations++;
 
         //move selection
@@ -136,10 +141,6 @@ int main(int argc, char **argv) {
         }
     }
 
-    //print and thoroughly verify final solution
-    board.printBoard();
-    bool isSolved = board.verifySolved();
-
     double timeTaken = (double) (clock() - tStart) / CLOCKS_PER_SEC;
     double iterationsPerSecond = iterations / ((double) (clock() - tStart) / CLOCKS_PER_SEC);
 
@@ -150,6 +151,13 @@ int main(int argc, char **argv) {
     printf("Selector time taken:    %.5fs\n", stime / CLOCKS_PER_SEC);
     printf("Acceptor time taken:    %.5fs\n", atime / CLOCKS_PER_SEC);
     selector->printOperatorCounts();
+
+    printf("\nCol conflicts:     %d\n", colConflicts);
+    printf("\nRow conflicts:     %d\n", rowConflicts);
+
+    //print and thoroughly verify final solution
+    board.printBoard();
+    bool isSolved = board.verifySolved();
 
     //to-file output
     std::string outputPath, fileName, runId;

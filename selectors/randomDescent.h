@@ -6,8 +6,7 @@
 class RandomDescent : public Selector
 {
 private:
-    bool lastIterationImprovedObjective;
-    uint_fast8_t lastLLHUsed;
+    uint_fast8_t currentId;
 public:
     explicit RandomDescent();
     void select(boardType &board) override;

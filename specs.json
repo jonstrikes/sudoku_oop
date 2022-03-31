@@ -1,0 +1,26 @@
+{
+  "General": {
+    "Timelimits": {
+      "3": 5,
+      "4": 30,
+      "5": 350
+    },
+    "SEED": 31
+  },
+  "Acceptors": {
+    "Simulated_Annealing": {
+      "TEMP_INITIAL": 0.1,
+      "ITEARATION_LIMIT": 10000
+    }
+  },
+  "Selectors": {
+    "Reinforcement_Learning": {
+      "UTILITY_UPPER_BOUND_FACTOR": 1.0,
+      "UTILITY_INITIAL_FACTOR": 0.85
+    }
+  },
+  "CP": {
+    "WORSENING_ITERATION_LIMIT": 50,
+    "ITERATION_SIZE_FACTOR": 2
+  }
+}

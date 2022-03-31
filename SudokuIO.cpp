@@ -8,7 +8,8 @@ boardType readFile(const string &fileDir) {
     inFile.open(fileDir);
 
     if (inFile.fail()) {
-        cout << "Error: " << strerror(errno);
+        cout << "Error: " << strerror(errno) << std::endl;
+        cout << "Could not find input problem file" << std::endl;
     }
 
     int n, N, minCellValue, maxCellValue;
@@ -34,11 +35,26 @@ boardType readFile(const string &fileDir) {
     return boardType(n, N, minCellValue, maxCellValue, grid, fixed);
 }
 
-bool readCMDParams(char **input, int size, std::string &puzzleDir,
-                   std::string &outputLog, std::string &solutionOutput) {
-    if (size != 4 && size != 6) {
+
+nlohmann::json readSpecification() {
+    std::ifstream specsFile("specs.json", std::ifstream::binary);
+
+    if (specsFile.fail()) {
+        cout << "Error: " << strerror(errno) << std::endl;
+        cout << "Could not find specs.json file" << std::endl;
+    }
+
+    nlohmann::json specs;
+    specsFile >> specs;
+
+    specsFile.close();
+    return specs;
+}
+
+bool readCMDParams(char **input, int size, std::string &puzzleDir) {
+    if (size != 2 && size != 4) {
         printf("Sudoku Solver\n");
-        printf("Usage: PuzzlePath OutputFile SolutionFile -acceptor -selector\n");
+        printf("Usage: puzzlePath -acceptor -selector\n");
         printf("If either the acceptor or selector is not specified, the program defaults to Simple Random and Improve or Equal\n");
         printf("Acceptors: -oi, -ie, -sa, -ailta\n");
         printf("Selectors: -sr, -rd, -rp, -rpd\n");
@@ -46,18 +62,16 @@ bool readCMDParams(char **input, int size, std::string &puzzleDir,
     }
 
     puzzleDir = input[1];
-    outputLog = input[2];
-    solutionOutput = input[3];
 
     return true;
 }
 
 bool readCMDOptionalParams(char **input, int size, std::string &acceptorType, std::string &selectorType) {
-    if (size != 6) {
+    if (size != 4) {
         return false;
     }
-    acceptorType = input[4];
-    selectorType = input[5];
+    acceptorType = input[2];
+    selectorType = input[3];
     return true;
 }
 
@@ -71,14 +85,13 @@ void readAcceptorMethod(const std::string &acceptorMethod, Acceptor *&acceptor, 
         acceptor = new SimulatedAnnealing(board, *selector);
     } else if (acceptorMethod == "--adaptive-iteration-limited-threshold-accepting" || acceptorMethod == "-ailta") {
         acceptor = new AdaptiveIterationLimitedThresholdAccepting(board);
-    }
-    else {
+    } else {
         acceptor = new ImproveOrEqual(board);
         printf("Acceptor %s not found, using default: Improve or Equal\n", acceptorMethod.c_str());
     }
 }
 
-void readSelectorMethod(const std::string &selectorMethod, Selector *&selector) {
+void readSelectorMethod(const std::string &selectorMethod, nlohmann::json &specs, Selector *&selector) {
     if (selectorMethod == "--simple-random" || selectorMethod == "-sr") {
         selector = new SimpleRandom();
     } else if (selectorMethod == "--random-descent" || selectorMethod == "-rd") {
@@ -88,7 +101,17 @@ void readSelectorMethod(const std::string &selectorMethod, Selector *&selector) 
     } else if (selectorMethod == "--random-permutation-descent" || selectorMethod == "-rpd") {
         selector = new RandomPermutationDescent();
     } else if (selectorMethod == "--reinforcement-learning" || selectorMethod == "-rl") {
-        selector = new ReinforcementLearning(1, 0.75);
+        int UTILITY_UPPER_BOUND_FACTOR;
+        double UTILITY_INITIAL_FACTOR;
+
+        try {
+            UTILITY_UPPER_BOUND_FACTOR = specs["Reinforcement_Learning"]["UTILITY_UPPER_BOUND_FACTOR"];
+            UTILITY_INITIAL_FACTOR = specs["Reinforcement_Learning"]["UTILITY_INITIAL_FACTOR"];
+        } catch (std::exception const &ex) {
+            throw std::invalid_argument("Could not parse Reinforcement Learning parameters from specs.json\n");
+        }
+
+        selector = new ReinforcementLearning(UTILITY_UPPER_BOUND_FACTOR, UTILITY_INITIAL_FACTOR);
     } else {
         selector = new SimpleRandom();
         printf("Selector %s not found, using default: Simple Random\n", selectorMethod.c_str());
@@ -195,7 +218,8 @@ void writeAcceptorLog(boardType &board, Acceptor *&acceptor, const std::string &
 }
 
 void writeGeneralLog(boardType &board, Selector *&selector, Acceptor *&acceptor, string selectorMethod,
-                     string acceptorMethod, std::string fileName, bool isSolved, double timeTaken, double iterationsPerSecond){
+                     string acceptorMethod, std::string fileName, bool isSolved, double timeTaken,
+                     double iterationsPerSecond) {
 
     std::string generalPath = "./program-output/experiments" + std::to_string(board.n) + "x" + std::to_string(board.n) +
                               "/" + acceptorMethod + "_" + selectorMethod + "/";
@@ -215,7 +239,7 @@ void writeGeneralLog(boardType &board, Selector *&selector, Acceptor *&acceptor,
         generalLog << isSolved << " ";
         generalLog << std::fixed << timeTaken << " ";
         generalLog << std::fixed << selector->getIterations() << " ";
-        if(_isnan(iterationsPerSecond) || std::isinf(iterationsPerSecond) || selector->getIterations() < 1000)
+        if (_isnan(iterationsPerSecond) || std::isinf(iterationsPerSecond) || selector->getIterations() < 1000)
             generalLog << 0.0 << " ";
         else
             generalLog << std::fixed << iterationsPerSecond << " ";

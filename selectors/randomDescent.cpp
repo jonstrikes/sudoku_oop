@@ -1,18 +1,19 @@
 #include "randomDescent.h"
 
-RandomDescent::RandomDescent() : Selector(), lastIterationImprovedObjective(), lastLLHUsed() {}
+RandomDescent::RandomDescent() : Selector() {
+    currentId = fastrand() % operators.size();
+}
 
 void RandomDescent::select(boardType &board) {
-    //select another heuristic if previous did not produce a better objective score
-    if(!lastIterationImprovedObjective){
-        lastLLHUsed = fastrand() % operators.size();
-    }
-    (*operators[lastLLHUsed])(board);
+    (*operators[currentId])(board);
 
-    useCounts[lastLLHUsed]++;
+    useCounts[currentId]++;
     iterations++;
 }
 
-void RandomDescent::updateState(int objectiveChange) {
-    lastIterationImprovedObjective = objectiveChange < 0;
+void RandomDescent::updateState(int change) {
+    //choose next operator if last change did not improve objective score
+    if(change >= 0){
+        currentId = fastrand() % operators.size();
+    }
 }

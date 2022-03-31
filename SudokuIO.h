@@ -23,16 +23,21 @@
 #include "selectors/randomPermutationDescent.h"
 #include "selectors/reinforcementLearning.h"
 
+#include "nlohmann/json.hpp"
+
 //input functions
 boardType readFile(const std::string &fileDir);
 
-bool readCMDParams(char **input, int size, std::string &puzzleDir, std::string &outputLog, std::string &solutionOutput);
+nlohmann::json readSpecification();
+
+bool readCMDParams(char **input, int size, std::string &puzzleDir);
 
 bool readCMDOptionalParams(char **input, int size, std::string &acceptorType, std::string &selectorType);
 
 void readAcceptorMethod(const std::string &acceptorMethod, Acceptor *&acceptor, Selector *&selector, boardType &board);
 
-void readSelectorMethod(const std::string &selectorMethod, Selector *&selector);
+void readSelectorMethod(const std::string &selectorMethod, nlohmann::json &specs, Selector *&selector);
+
 
 //output functions
 void prepareOutput(const std::string &inputPath, std::string &outputPath, std::string &fileName, std::string &runId,
