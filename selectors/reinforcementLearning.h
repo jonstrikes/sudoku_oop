@@ -3,18 +3,32 @@
 
 #include "../models/selector.h"
 
-class ReinforcementLearning : public Selector
-{
+/*
+ * This selection method was implemented following pseudocode from
+ *  "A Reinforcement Learning – Great-Deluge Hyper-heuristic for Examination Timetabling"
+ *  (Özcan, Ender, et al.)
+ */
+class ReinforcementLearning : public Selector {
 private:
     vector<double> utilityValues;
+    std::vector<int> ids;
 
     int lastLLHUsed;
     int lowerUtilityBound;
     int upperUtilityBound;
 
+    std::function<double(double)> penalty_function;
+    std::function<double(double)> reward_function;
+
+    void initialisePenaltyStrategy(const std::string& penaltyStrategy);
+    void initialiseRewardStrategy(const std::string& rewardStrategy);
+
 public:
-    explicit ReinforcementLearning(int utilityUpperBoundFactor, double initialUtilityFactor);
+    explicit ReinforcementLearning(int utilityUpperBoundFactor, double initialUtilityFactor,
+                                   const std::string& penaltyStrategy, const std::string& rewardStrategy);
+
     void select(boardType &board) override;
+
     void updateState(int change) override;
 };
 

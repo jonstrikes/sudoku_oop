@@ -103,15 +103,19 @@ void readSelectorMethod(const std::string &selectorMethod, nlohmann::json &specs
     } else if (selectorMethod == "--reinforcement-learning" || selectorMethod == "-rl") {
         int UTILITY_UPPER_BOUND_FACTOR;
         double UTILITY_INITIAL_FACTOR;
+        std::string PENALTY_METHOD, REWARD_METHOD;
 
         try {
             UTILITY_UPPER_BOUND_FACTOR = specs["Reinforcement_Learning"]["UTILITY_UPPER_BOUND_FACTOR"];
             UTILITY_INITIAL_FACTOR = specs["Reinforcement_Learning"]["UTILITY_INITIAL_FACTOR"];
+            PENALTY_METHOD = specs["Reinforcement_Learning"]["PENALTY_METHOD"];
+            REWARD_METHOD = specs["Reinforcement_Learning"]["REWARD_METHOD"];
+
+            selector = new ReinforcementLearning(UTILITY_UPPER_BOUND_FACTOR, UTILITY_INITIAL_FACTOR,
+                                                 PENALTY_METHOD, REWARD_METHOD);
         } catch (std::exception const &ex) {
             throw std::invalid_argument("Could not parse Reinforcement Learning parameters from specs.json\n");
         }
-
-        selector = new ReinforcementLearning(UTILITY_UPPER_BOUND_FACTOR, UTILITY_INITIAL_FACTOR);
     } else {
         selector = new SimpleRandom();
         printf("Selector %s not found, using default: Simple Random\n", selectorMethod.c_str());
