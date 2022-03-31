@@ -7,7 +7,8 @@ boardType::boardType(int n, int N, int minCellValue, int maxCellValue,
         n(n), N(N),
         minCellValue(minCellValue), maxCellValue(maxCellValue),
         board(std::move(board)), fixed(std::move(fixed)),
-        moveRecord(), encounteredAlongRow(N), encounteredAlongCol(N)
+        moveRecord(), encounteredAlongRow(N), encounteredAlongCol(N),
+        startingBoard(this->board), startingFixed(this->fixed)
 {
     //initialise column and row objective containers
     rowObjectives = vector<uint_fast8_t>(N);
@@ -146,8 +147,6 @@ int boardType::calculateObjective() {
         rowObjectives[i] = rowCost;
         colObjectives[i] = colCost;
         obj += rowCost + colCost;
-//        std::cout << " Cost for row " << i << ": " << rowCost << std::endl;
-//        std::cout << " Cost for col " << i << ": " << colCost << std::endl;
     }
     return obj;
 }
@@ -237,6 +236,15 @@ bool boardType::verifySolved() {
             }
             //reset work vector
             encountered.assign(encountered.size(), false);
+        }
+    }
+
+    //check starting fixed cell values match solution
+    for (int row = 0; row < N; row++) {
+        for (int col = 0; col < N; col++) {
+            if(startingFixed[row][col] && (startingBoard[row][col] != board[row][col])){
+                isCorrect = false;
+            }
         }
     }
 

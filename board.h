@@ -15,26 +15,26 @@
 using std::vector;
 
 struct boardType {
-    //CONSIDER ADDING A SCORE HERE INSTEAD OF USING THAT CRINGE CHANGE VAR
     int n;
     int N;
     int minCellValue;
     int maxCellValue;
 
+    //2d vector representing the cell values of the board
     vector<vector<int>> board;
+    //2d vector marking cell values that can not be changed
     vector<vector<bool>> fixed;
 
     vector<uint_fast8_t> rowObjectives;
     vector<uint_fast8_t> colObjectives;
 
+    //previous state representation
     MoveRecord moveRecord;
-
-    vector<bool> encounteredAlongRow;
-    vector<bool> encounteredAlongCol;
 
     boardType(int n, int N, int minCellValue, int maxCellValue,
               vector<vector<int>> board, vector<vector<bool>> fixed);
 
+    //displays the board to standard output and returns the string representation of the board
     std::string printBoard();
 
     //checks if there are moves recorded in history
@@ -66,13 +66,23 @@ struct boardType {
     //verifies if the board is a correct solution
     bool verifySolved();
 
+    //returns coordinates of cells that are conflicting in row/col/block
     std::set<std::pair<uint_fast8_t, uint_fast8_t>> getConflictingCells();
 
 private:
+    //work vector used internally to avoid reinitialising
+    vector<bool> encounteredAlongRow;
+    //work vector used internally to avoid reinitialising
+    vector<bool> encounteredAlongCol;
+    //starting board, only used for thorough answer verification
+    vector<vector<int>> startingBoard;
+    //starting fixed cell map, only used for thorough answer verification
+    vector<vector<bool>> startingFixed;
+
     static std::string cellToString(int cell);
 
+    //private constructor and comparator to avoid implicit copying of board
     boardType(const boardType &);
-
     boardType &operator=(const boardType &);
 };
 
