@@ -87,6 +87,8 @@ void readSelectorMethod(const std::string &selectorMethod, Selector *&selector) 
         selector = new RandomPermutation();
     } else if (selectorMethod == "--random-permutation-descent" || selectorMethod == "-rpd") {
         selector = new RandomPermutationDescent();
+    } else if (selectorMethod == "--reinforcement-learning" || selectorMethod == "-rl") {
+        selector = new ReinforcementLearning(1, 0.75);
     } else {
         selector = new SimpleRandom();
         printf("Selector %s not found, using default: Simple Random\n", selectorMethod.c_str());

@@ -13,4 +13,6 @@ void cpoExchange(boardType &board);
 void insertSym(boardType &board);
 void invertSym(boardType &board);
 
+void swapConflicting(boardType &board);
+
 #endif //SUDOKU_OOP_OPERATORS_H

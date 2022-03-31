@@ -20,6 +20,7 @@ set(PROJECT_HEADERS
         selectors/randomDescent.h
         selectors/randomPermutation.h
         selectors/randomPermutationDescent.h
+        selectors/reinforcementLearning.h
 
         #acceptors
         models/acceptor.h
@@ -46,6 +47,9 @@ set(PROJECT_SOURCES
         operators/insert.cpp
         operators/invert.cpp
         operators/cpoExchange.cpp
+        operators/insertSym.cpp
+        operators/invertSym.cpp
+        operators/swapConflicting.cpp
 
         #selectors
         models/selector.cpp
@@ -53,6 +57,7 @@ set(PROJECT_SOURCES
         selectors/randomDescent.cpp
         selectors/randomPermutation.cpp
         selectors/randomPermutationDescent.cpp
+        selectors/reinforcementLearning.cpp
 
         #acceptors
         models/acceptor.cpp
@@ -65,7 +70,6 @@ set(PROJECT_SOURCES
         procedures/cpProcedure.cpp
 
         MoveRecord.cpp
-        board.cpp
-        )
+        board.cpp)
 
 add_executable(sudoku_oop ${PROJECT_SOURCES} ${PROJECT_HEADERS})
