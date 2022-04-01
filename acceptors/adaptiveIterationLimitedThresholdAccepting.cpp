@@ -1,5 +1,10 @@
 #include "adaptiveIterationLimitedThresholdAccepting.h"
 
+/**
+ * This selection method was implemented after reading
+ *  "Hyper-heuristics with a dynamic heuristic set for the home care scheduling problem"
+ *  (Misir, Mustafa)
+ **/
 AdaptiveIterationLimitedThresholdAccepting::AdaptiveIterationLimitedThresholdAccepting(
         boardType &board, int W_ITERATION_THRESHOLD, double K_FACTOR, double E_INITIAL, double E_FACTOR)
         :

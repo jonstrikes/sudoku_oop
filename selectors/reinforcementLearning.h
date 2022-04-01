@@ -8,6 +8,9 @@
  * This selection method was implemented following pseudocode from
  *  "A Reinforcement Learning – Great-Deluge Hyper-heuristic for Examination Timetabling"
  *  (Özcan, Ender, et al.)
+ *
+ *  and negative/positive reinforcement strategies from "CHOOSING SEARCH HEURISTICS BY NONSTATIONARY REINFORCEMENT LEARNING"
+*  (Nareyek, Alexander)
  **/
 class ReinforcementLearning : public Selector {
 private:

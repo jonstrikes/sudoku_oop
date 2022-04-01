@@ -4,6 +4,18 @@ Code was compiled and ran on an Intel I5-7300HQ 2.50GHz Windows 10 machine runni
 The project was compiled and ran using the CMakeLists file provided in Release mode with -o3 optimisation turned on.
 
 =======================================================================================================================
+Overview:
+
+The general approach is to iteratively mutate a sudoku board. At each iteration, a selection method will choose a
+low level heuristic based on some strategy and apply it to produce change. A move acceptance method then evaluates
+the objective impact from this change and decides whether to accept or reject this change based on some strategy.
+
+In addition to local search, a constraint programming procedure is implemented that clears part of the board and attempts
+to fill empty cells implicitly. This procedure is run periodically and is used to help guide local search methodsas well
+as escape from local optima solutions.
+
+=======================================================================================================================
+Input:
 
 The program works by taking a single puzzle as input and produces output to four files that log different parts of the algorithm.
 
@@ -62,25 +74,23 @@ Simulated Annealing:
     TEMPERATURE_FACTOR - is used to scale the calculated temperature value
     CYCLE_LENGTH_FACTOR - is used to scale the length of a cycle relative to problem size
 
-Reinforcement_Learning":
-    UTILITY_UPPER_BOUND_FACTOR" - scales the utility upper bound value
-    UTILITY_INITIAL_FACTOR": - initial utility value of all operators relative to upper bound
-    PENALTY_METHOD" - the three penalty methods implemented are subtractive (P1), divisional (P2), root (P3)
-    REWARD_METHOD" - the three reward methods implemented are additive (R1), multiplicative (R2), power (R3)
+Reinforcement_Learning:
+    UTILITY_UPPER_BOUND_FACTOR - scales the utility upper bound value
+    UTILITY_INITIAL_FACTOR - initial utility value of all operators relative to upper bound
+    PENALTY_METHOD - the three penalty methods implemented are subtractive (P1), divisional (P2), root (P3)
+    REWARD_METHOD - the three reward methods implemented are additive (R1), multiplicative (R2), power (R3)
 
     The six negative/positive reinforcement strategies implemented as described in
     "CHOOSING SEARCH HEURISTICS BY NONSTATIONARY REINFORCEMENT LEARNING" (Nareyek, Alexander)
 
-Adaptive_Iteration_Limited_Threshold_Accepting":
+Adaptive_Iteration_Limited_Threshold_Accepting:
     W_ITERATION_THRESHOLD - controls how greedy the algorithm is
     K_FACTOR - can be used to scale k value
     E_INITIAL - initial setting of e value
     E_FACTOR - can be used to scale e value
 
 
-In addition to local search, a constraint programming procedure clears part of the board and attempts to fill empty cells implicitly.
-This procedure is run periodically and is used to help guide local search methods
-as well as escape from local optima solutions.
+Constraint_Programming:
     CYCLE_ITERATIONS_FACTOR - controls how many cycles pass before the procedure is run
     LOG_CYCLE_LIMIT - controls how often short logging messages are displayed to std_out
     WORSENING_CYCLES_LIMIT - controls how many worsening cycles are allowed before a solution is randomised

@@ -1,5 +1,10 @@
 #include "simulatedAnnealing.h"
 
+/**
+ * This selection method was adapted following the successful metaheuristic approach from
+ *  "Metaheuristics can solve sudoku puzzles"
+ *  (Lewis)
+ **/
 SimulatedAnnealing::SimulatedAnnealing(boardType &board, Selector &selector,
                                        const double COOL_RATE, const double TEMPERATURE_THRESHOLD,
                                        const double TEMPERATURE_FACTOR,

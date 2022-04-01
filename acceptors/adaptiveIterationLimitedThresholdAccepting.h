@@ -3,6 +3,11 @@
 
 #include "../models/acceptor.h"
 
+/**
+ * This selection method was implemented after reading
+ *  "Hyper-heuristics with a dynamic heuristic set for the home care scheduling problem"
+ *  (Misir, Mustafa)
+ **/
 class AdaptiveIterationLimitedThresholdAccepting : public Acceptor {
 private:
     const int W_ITERATION_THRESHOLD;

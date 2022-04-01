@@ -5,6 +5,11 @@
 #include "../models/selector.h"
 #include <numeric>
 
+/**
+ * This selection method was adapted following the successful metaheuristic approach from
+ *  "Metaheuristics can solve sudoku puzzles"
+ *  (Lewis)
+ **/
 class SimulatedAnnealing : public Acceptor
 {
 private:
