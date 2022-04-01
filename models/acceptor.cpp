@@ -51,14 +51,14 @@ void Acceptor::printLog() {
     printf("%-20.15s %d\n", "Recalculate:", recalcCallCount);
 
     printf("\nTotal time spent on acceptance procedures:\n");
-    printf("%-20.15s %.5fs\n", "Accept:", timeSpentAccepting / CLOCKS_PER_SEC);
-    printf("%-20.15s %.5fs\n", "Reject:", timeSpentRejecting / CLOCKS_PER_SEC);
-    printf("%-20.15s %.5fs\n", "Recalculate:", timeSpentRecalculating / CLOCKS_PER_SEC);
+    printf("%-20.15s %.5es\n", "Accept:", timeSpentAccepting / CLOCKS_PER_SEC);
+    printf("%-20.15s %.5es\n", "Reject:", timeSpentRejecting / CLOCKS_PER_SEC);
+    printf("%-20.15s %.5es\n", "Recalculate:", timeSpentRecalculating / CLOCKS_PER_SEC);
 
     printf("\nAverage time spent on acceptance procedures:\n");
-    printf("%-20.15s %.25fs\n", "Accept:", timeSpentAccepting / (acceptCallCount * CLOCKS_PER_SEC));
-    printf("%-20.15s %.25fs\n", "Reject:", timeSpentRejecting / (rejectCallCount * CLOCKS_PER_SEC));
-    printf("%-20.15s %.25fs\n", "Recalculate:", timeSpentRecalculating / (recalcCallCount * CLOCKS_PER_SEC));
+    printf("%-20.15s %.5es\n", "Accept:", timeSpentAccepting / (acceptCallCount * CLOCKS_PER_SEC));
+    printf("%-20.15s %.5es\n", "Reject:", timeSpentRejecting / (rejectCallCount * CLOCKS_PER_SEC));
+    printf("%-20.15s %.5es\n", "Recalculate:", timeSpentRecalculating / (recalcCallCount * CLOCKS_PER_SEC));
 
 }
 

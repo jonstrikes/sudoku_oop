@@ -5,13 +5,14 @@ std::pair<int, int> getImplicitValueIfExists(boardType &board, std::vector<std::
 std::set<uint_fast8_t> getPossibleValues(boardType &board, int row, int col);
 
 
-CpProcessor::CpProcessor(boardType &board, Acceptor *&acceptor, int WORSENING_CYCLES_LIMIT, double CYCLE_ITERATIONS_FACTOR,
+CpProcessor::CpProcessor(boardType &board, Acceptor *&acceptor, int WORSENING_CYCLES_LIMIT,
+                         double CYCLE_ITERATIONS_FACTOR, int LOG_CYCLE_LIMIT,
                          double WORSENING_CYCLES_FACTOR, double RESET_INITIAL,
                          double RESET_MIN, double RESET_MAX, double RESET_ALPHA, double RESET_BETA)
         :
         board(board), acceptor(*acceptor), originalFixed(board.fixed), cyclesWithoutImprovement(), iteration(),
         bestCycleObjective(board.N * board.N), resetFactor(RESET_INITIAL), RESET_INITIAL(RESET_INITIAL),
-        CYCLE_ITERATIONS_FACTOR(CYCLE_ITERATIONS_FACTOR),
+        CYCLE_ITERATIONS_FACTOR(CYCLE_ITERATIONS_FACTOR), LOG_CYCLE_LIMIT(LOG_CYCLE_LIMIT),
         WORSENING_CYCLES_LIMIT(WORSENING_CYCLES_LIMIT), WORSENING_CYCLES_FACTOR(WORSENING_CYCLES_FACTOR),
         RESET_MIN(RESET_MIN), RESET_MAX(RESET_MAX), RESET_ALPHA(RESET_ALPHA), RESET_BETA(RESET_BETA)
 {
@@ -23,9 +24,12 @@ void CpProcessor::run() {
     iteration++;
 
     if(iteration % currentCycleLength == 0){
-        std::cout << "-------------------CP-------------------\n";
-        std::cout << "Cycles without improvement: " << cyclesWithoutImprovement << std::endl;
         int lastCycleObjective = acceptor.getObjective();
+
+        if(iteration % int((currentCycleLength * LOG_CYCLE_LIMIT)) == 0){
+            printf("Last objective: %10d\t Best objective: %10d\t Reset factor: %10f\n",
+                   lastCycleObjective, bestCycleObjective, resetFactor);
+        }
 
         if(lastCycleObjective == 0){
             return;
@@ -42,26 +46,22 @@ void CpProcessor::run() {
         board.generateSolution();
         acceptor.resetState(board);
 
-        //MAYBE MAKE <= or < a parameter
         if (lastCycleObjective <= bestCycleObjective) {
             cyclesWithoutImprovement = 0;
             bestCycleObjective = lastCycleObjective;
 
             if (resetFactor > RESET_MIN) {
-                std::cout << "decreasing resetFactor " << resetFactor << "\n";
                 resetFactor *= RESET_ALPHA;
             }
         } else {
             cyclesWithoutImprovement++;
 
             if (cyclesWithoutImprovement >= WORSENING_CYCLES_LIMIT) {
+                printf("CP board reset - too many worsening cycles\n");
                 board.fixed = originalFixed;
-                std::cout << "After cyclic reset in CP\n";
-                board.printBoard();
-                board.randomiseExistingSolution();
-
                 resetFactor = RESET_INITIAL;
                 cyclesWithoutImprovement = 0;
+                board.randomiseExistingSolution();
                 bestCycleObjective = acceptor.resetState(board);
             }
         }
@@ -193,8 +193,6 @@ std::pair<int, int> getImplicitValueIfExists(boardType &board, std::vector<std::
                 //if current value is encountered more than once try next
                 if (encountered[possibleValue]) {
                     goto endOfIteration;
-//                    encountered.assign(boardSequence.size(), false);
-//                    break;
                 }
                 //mark last encounter in-case it is the only one in the sequence
                 lastEncounter = i;
@@ -203,10 +201,6 @@ std::pair<int, int> getImplicitValueIfExists(boardType &board, std::vector<std::
         }
 
         if (std::count(encountered.begin(), encountered.end(), true) == 1) {
-            //fill value
-//            boardSequence[lastEncounter] = possibleValue;
-//            board.fixed[lastEncounter] = true;
-//            return true;
             return std::make_pair(lastEncounter, possibleValue);
         }
 

@@ -16,3 +16,8 @@ int ImproveOrEqual::process(boardType &board) {
 
     return objChange;
 }
+
+void ImproveOrEqual::printShortLog() {
+    printf("\nIOE acceptance strategy, iteration: %d\n", iteration);
+    printf("Current Objective: %d\n", objective);
+}

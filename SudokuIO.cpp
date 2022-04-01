@@ -162,7 +162,7 @@ void readSelectorMethod(const std::string &selectorMethod, nlohmann::json &specs
 }
 
 void readCpParams(boardType &board, Acceptor *&acceptor, nlohmann::json &specs, CpProcessor *&cpProcessor) {
-    int WORSENING_CYCLES_LIMIT;
+    int WORSENING_CYCLES_LIMIT, LOG_CYCLE_LIMIT;
     double CYCLE_ITERATIONS_FACTOR, WORSENING_CYCLES_FACTOR, RESET_INITIAL, RESET_MIN, RESET_MAX, RESET_ALPHA, RESET_BETA;
 
     try {
@@ -174,10 +174,11 @@ void readCpParams(boardType &board, Acceptor *&acceptor, nlohmann::json &specs, 
         RESET_MAX = specs["CP"]["RESET_MAX"];
         RESET_ALPHA = specs["CP"]["RESET_ALPHA"];
         RESET_BETA = specs["CP"]["RESET_BETA"];
+        LOG_CYCLE_LIMIT = specs["CP"]["LOG_CYCLE_LIMIT"];
 
         cpProcessor = new CpProcessor(board, acceptor, WORSENING_CYCLES_LIMIT, CYCLE_ITERATIONS_FACTOR,
-                                      WORSENING_CYCLES_FACTOR, RESET_INITIAL, RESET_MIN, RESET_MAX, RESET_ALPHA,
-                                      RESET_BETA);
+                                      LOG_CYCLE_LIMIT, WORSENING_CYCLES_FACTOR,
+                                      RESET_INITIAL, RESET_MIN, RESET_MAX, RESET_ALPHA, RESET_BETA);
 
     } catch (std::exception const &ex) {
         throw std::invalid_argument("Could not parse Constraint Programming parameters from specs.json\n");

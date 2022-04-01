@@ -16,3 +16,8 @@ int OnlyImprove::process(boardType &board) {
 
     return objChange;
 }
+
+void OnlyImprove::printShortLog() {
+    printf("\nOI acceptance strategy, iteration: %d\n", iteration);
+    printf("Current Objective: %d\n", objective);
+}

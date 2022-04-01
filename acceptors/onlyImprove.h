@@ -8,6 +8,7 @@ class OnlyImprove : public Acceptor
 public:
     explicit OnlyImprove(boardType &board);
     int process(boardType &board) override;
+    void printShortLog() override;
 };
 
 #endif //SUDOKU_OOP_ONLYIMPROVE_H

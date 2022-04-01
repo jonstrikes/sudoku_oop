@@ -45,22 +45,22 @@ void Selector::printLog() {
     printf("%-20.15s %d\n", "CPOExchange:", useCounts[6]);
 
     printf("\nOperator times spent:\n");
-    printf("%-20.15s %.5fs\n", "Swap:", timesSpent[0] / CLOCKS_PER_SEC);
-    printf("%-20.15s %.5fs\n", "Insert:", timesSpent[1] / CLOCKS_PER_SEC);
-    printf("%-20.15s %.5fs\n", "InsertSym:", timesSpent[2] / CLOCKS_PER_SEC);
-    printf("%-20.15s %.5fs\n", "SwapConf:", timesSpent[3] / CLOCKS_PER_SEC);
-    printf("%-20.15s %.5fs\n", "Invert:", timesSpent[4] / CLOCKS_PER_SEC);
-    printf("%-20.15s %.5fs\n", "InvertSym:", timesSpent[5] / CLOCKS_PER_SEC);
-    printf("%-20.15s %.5fs\n", "CPOExchange:", timesSpent[6] / CLOCKS_PER_SEC);
+    printf("%-20.15s %.5es\n", "Swap:", timesSpent[0] / CLOCKS_PER_SEC);
+    printf("%-20.15s %.5es\n", "Insert:", timesSpent[1] / CLOCKS_PER_SEC);
+    printf("%-20.15s %.5es\n", "InsertSym:", timesSpent[2] / CLOCKS_PER_SEC);
+    printf("%-20.15s %.5es\n", "SwapConf:", timesSpent[3] / CLOCKS_PER_SEC);
+    printf("%-20.15s %.5es\n", "Invert:", timesSpent[4] / CLOCKS_PER_SEC);
+    printf("%-20.15s %.5es\n", "InvertSym:", timesSpent[5] / CLOCKS_PER_SEC);
+    printf("%-20.15s %.5es\n", "CPOExchange:", timesSpent[6] / CLOCKS_PER_SEC);
 
     printf("\nOperator Average times spent:\n");
-    printf("%-20.15s %.25fs\n", "Swap:", timesSpent[0]/ (useCounts[0] * CLOCKS_PER_SEC));
-    printf("%-20.15s %.25fs\n", "Insert:", timesSpent[1]/ (useCounts[1] * CLOCKS_PER_SEC));
-    printf("%-20.15s %.25fs\n", "InsertSym:", timesSpent[2]/ (useCounts[2] * CLOCKS_PER_SEC));
-    printf("%-20.15s %.25fs\n", "SwapConf:", timesSpent[3]/ (useCounts[3] * CLOCKS_PER_SEC));
-    printf("%-20.15s %.25fs\n", "Invert:", timesSpent[4]/ (useCounts[4] * CLOCKS_PER_SEC));
-    printf("%-20.15s %.25fs\n", "InvertSym:", timesSpent[5]/ (useCounts[5] * CLOCKS_PER_SEC));
-    printf("%-20.15s %.25fs\n\n", "CPOExchange:", timesSpent[6]/ (useCounts[6] * CLOCKS_PER_SEC));
+    printf("%-20.15s %.5es\n", "Swap:", timesSpent[0]/ (useCounts[0] * CLOCKS_PER_SEC));
+    printf("%-20.15s %.5es\n", "Insert:", timesSpent[1]/ (useCounts[1] * CLOCKS_PER_SEC));
+    printf("%-20.15s %.5es\n", "InsertSym:", timesSpent[2]/ (useCounts[2] * CLOCKS_PER_SEC));
+    printf("%-20.15s %.5es\n", "SwapConf:", timesSpent[3]/ (useCounts[3] * CLOCKS_PER_SEC));
+    printf("%-20.15s %.5es\n", "Invert:", timesSpent[4]/ (useCounts[4] * CLOCKS_PER_SEC));
+    printf("%-20.15s %.5es\n", "InvertSym:", timesSpent[5]/ (useCounts[5] * CLOCKS_PER_SEC));
+    printf("%-20.15s %.5es\n\n", "CPOExchange:", timesSpent[6]/ (useCounts[6] * CLOCKS_PER_SEC));
 }
 
 std::string Selector::getLog(){

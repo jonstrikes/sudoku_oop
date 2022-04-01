@@ -23,6 +23,8 @@ public:
                                                         double E_INITIAL, double E_FACTOR);
 
     int process(boardType &board) override;
+
+    void printShortLog() override;
 };
 
 #endif //SUDOKU_OOP_ADAPTIVEITERATIONLIMITEDTHRESHOLDACCEPTING_H

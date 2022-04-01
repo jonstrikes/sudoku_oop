@@ -33,6 +33,8 @@ public:
     virtual int resetState(boardType &board);
     int getObjective();
 
+    virtual void printShortLog() = 0;
+
     void printLog();
     std::string getLog();
 };

@@ -38,6 +38,7 @@ public:
 
     int resetState(boardType &board) override;
     int process(boardType &board) override;
+    void printShortLog() override;
 };
 
 #endif //SUDOKU_OOP_SIMULATEDANNEALING_H

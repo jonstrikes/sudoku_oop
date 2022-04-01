@@ -124,3 +124,8 @@ int SimulatedAnnealing::resetState(boardType &board) {
     return objective;
 }
 
+void SimulatedAnnealing::printShortLog() {
+    printf("Iteration: %10d\t Objective: %10d\t Temperature: %10f\n",
+           iterationLimit * iterationCycle, objective, temperature);
+}
+

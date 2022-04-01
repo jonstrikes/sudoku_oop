@@ -13,15 +13,16 @@ private:
     boardType &board;
     Acceptor &acceptor;
 
-    const int WORSENING_CYCLES_LIMIT = 50;
-    const double WORSENING_CYCLES_FACTOR = 1.0;
-    const double CYCLE_ITERATIONS_FACTOR = 1.0;
+    const int WORSENING_CYCLES_LIMIT;
+    const double WORSENING_CYCLES_FACTOR;
+    const double CYCLE_ITERATIONS_FACTOR;
+    const double LOG_CYCLE_LIMIT;
 
-    const double RESET_INITIAL = 1.0;
-    const double RESET_MIN = 0.1;
-    const double RESET_MAX = 1.0;
-    const double RESET_ALPHA = 0.5;
-    const double RESET_BETA = 0.2;
+    const double RESET_INITIAL;
+    const double RESET_MIN;
+    const double RESET_MAX;
+    const double RESET_ALPHA;
+    const double RESET_BETA;
 
     double resetFactor;
     int cyclesWithoutImprovement;
@@ -30,7 +31,8 @@ private:
     const vector<vector<bool>> originalFixed;
     int bestCycleObjective;
 public:
-    CpProcessor(boardType &board, Acceptor *&acceptor, int WORSENING_CYCLES_LIMIT, double CYCLE_ITERATIONS_FACTOR,
+    CpProcessor(boardType &board, Acceptor *&acceptor, int WORSENING_CYCLES_LIMIT,
+                double CYCLE_ITERATIONS_FACTOR, int LOG_CYCLE_LIMIT,
                 double WORSENING_CYCLES_FACTOR, double RESET_INITIAL,
                 double RESET_MIN, double RESET_MAX, double RESET_ALPHA, double RESET_BETA);
 

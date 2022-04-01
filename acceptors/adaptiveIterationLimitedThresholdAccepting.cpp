@@ -16,13 +16,6 @@ int AdaptiveIterationLimitedThresholdAccepting::process(boardType &board) {
     //reevaluate board
     int objChange = recalculate(board);
 
-    if (iteration % 1000000 == 0) {
-        std::cout << "k: " << k << " w_iterations: " << w_iterations << std::endl;
-        std::cout << "ObjChange: " << objChange << " Threshold: " << objective * e << std::endl;
-        std::cout << "Objective: " << objective << " Threshold: " << objective + objective * e << std::endl
-                  << std::endl;
-    }
-
     if (objChange <= 0) {
         if (objChange < 0) {
             resetParameters();
@@ -48,6 +41,12 @@ int AdaptiveIterationLimitedThresholdAccepting::process(boardType &board) {
 void AdaptiveIterationLimitedThresholdAccepting::resetParameters() {
     w_iterations = 0;
     e = E_INITIAL;
+}
+
+void AdaptiveIterationLimitedThresholdAccepting::printShortLog() {
+    printf("\nAILTA acceptance strategy, iteration: %d\n", iteration);
+    printf("k: %d\te: %f\tworsening iterations: %d\n", k, e, w_iterations);
+    printf("objective: %d\tCurrent threshold: %f.2\n", objective, objective * e);
 }
 
 
