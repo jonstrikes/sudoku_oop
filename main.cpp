@@ -45,15 +45,15 @@ int main(int argc, char **argv) {
     double timeLimit;
     readGeneralParams(board, specs, timeLimit);
 
-    //start of algorithm
-    clock_t tStart = clock();
-    clock_t tFinish = tStart + (timeLimit * CLOCKS_PER_SEC);
-    double stime = 0, atime = 0;
-
+    //calculate logging cycle relative to problem size and set parameter
     double LOG_ITERATIONS_FACTOR = specs["General"]["LOG_ITERATIONS_FACTOR"];
     int unfixedCount = board.countUnfixedCells();
     int iterationLimit = round(pow(unfixedCount, 2)) * LOG_ITERATIONS_FACTOR;
 
+    //start of algorithm
+    clock_t tStart = clock();
+    clock_t tFinish = tStart + (timeLimit * CLOCKS_PER_SEC);
+    double stime = 0, atime = 0, cptime = 0;
 
     int iterations = 0;
     while (!acceptor->isSolved()) {
@@ -79,8 +79,10 @@ int main(int argc, char **argv) {
 
         selector->updateState(change);
 
-        //runs every
+        //cp procedure
+        clock_t cpStart = clock();
         cpProcessor->run();
+        cptime += (double) (clock() - cpStart);
     }
 
     double timeTaken = (double) (clock() - tStart) / CLOCKS_PER_SEC;
@@ -96,6 +98,7 @@ int main(int argc, char **argv) {
     printf("%-30.30s %.2fs\n", "Sel and Acc time:", (stime + atime) / CLOCKS_PER_SEC);
     printf("%-30.30s %.2fs\n", "Selector time taken:", stime / CLOCKS_PER_SEC);
     printf("%-30.30s %.2fs\n\n", "Acceptor time taken:", atime / CLOCKS_PER_SEC);
+    printf("%-30.30s %.2fs\n\n", "CP procedure time taken:", cptime / CLOCKS_PER_SEC);
 
     //print and thoroughly verify final solution
     board.printBoard();
@@ -111,5 +114,6 @@ int main(int argc, char **argv) {
     //tidy up pointers
     delete acceptor;  delete selector; delete cpProcessor;
     acceptor = nullptr; selector = nullptr; cpProcessor = nullptr;
+
     return 0;
 }

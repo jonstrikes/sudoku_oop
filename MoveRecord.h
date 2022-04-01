@@ -18,6 +18,10 @@ public:
     uint_fast8_t rowObjective;
 };
 
+/**
+ * This class is used to store a previous staet of the baord and is used for reject() operations when an acceptor does
+ * not decide to keep a change
+ **/
 class MoveRecord {
 private:
     bool isEmpty;

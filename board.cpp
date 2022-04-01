@@ -126,8 +126,6 @@ int boardType::calculateObjective() {
     int value = minCellValue;
     for (int i = 0; i < N; i++, value++) possibleValues.push_back(value);
 
-    //objective function is calculated in current board like proposed in Lewis' paper
-    //NOTE: maybe it would be faster to just calculate duplicate values?
     int obj = 0;
     for (int i = 0; i < N; i++) {
         std::vector<int> rowValues(N);
@@ -157,7 +155,7 @@ int boardType::updateObjective() {
 
     int change = 0;
 
-    //this may calculate rows and cols multiple times
+    //this calculates rows and cols multiple times but was faster than trying to check for those already encountered
     for(MoveData cell : moveRecord.getChange()){
         uint_fast8_t rowCost = 0, colCost = 0;
 
@@ -261,7 +259,6 @@ void boardType::randomiseExistingSolution() {
             }
         }
     }
-    printBoard();
 
     generateSolution();
 }

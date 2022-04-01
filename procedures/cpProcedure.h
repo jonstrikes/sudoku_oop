@@ -8,6 +8,13 @@
 #include <set>
 #include <vector>
 
+/**
+ * This object is responsible for holding state information and parameters that decide how often a board is reset
+ * and constraints propagated.
+ *
+ * A similar approach was shown to be successful in the literature
+ * "A Hybrid Approach for the Sudoku problem: Using Constraint Programming in Iterated Local Search" (Musliu, Winter)
+ **/
 class CpProcessor {
 private:
     boardType &board;

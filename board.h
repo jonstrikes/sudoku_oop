@@ -52,6 +52,7 @@ struct boardType {
     //generates an initial solution or randomly reassigns an existing one
     void generateSolution();
 
+    //looks for any blocks with a single mising value and implicitly fills it
     void fixBlocksWithSingleCellMissing();
 
     //shuffles the unfixed cells of the current solution
