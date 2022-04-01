@@ -58,18 +58,19 @@ int main(int argc, char **argv) {
     Selector *selector;
     Acceptor *acceptor;
     readSelectorMethod(selectorMethod, specs, selector);
-    readAcceptorMethod(acceptorMethod, acceptor, selector, board);
+    readAcceptorMethod(acceptorMethod, specs, acceptor, selector, board);
 
     //start of algorithm
     clock_t tStart = clock();
     //clock_t tFinish = tStart + (timeLimit*CLOCKS_PER_SEC);
     double stime = 0, atime = 0;
 
-    int iterationLimit = 1000000;
+    int iterationLimit = 3000000;
     int iterations = 0;
 
     // isSolved or timout
     while (!acceptor->isSolved()) {
+    //while(iterations <= iterationLimit){
         iterations++;
 
         //move selection
@@ -105,6 +106,7 @@ int main(int argc, char **argv) {
             cycleIterations = round(pow(unfixedCount, 2));
 
             board.generateSolution();
+            //if u remove this, remove inside simulated annealing func too.
             acceptor->recalculateObjective(board);
 
             std::cout << "last: " << lastCycleObjective << " best: " << bestCycleObjective << " worsening cycles " << worseningCycles << " reset_f " << resetFactor << "\n" ;

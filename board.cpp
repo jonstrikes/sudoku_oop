@@ -361,5 +361,14 @@ void boardType::fixBlocksWithSingleCellMissing() {
 
 }
 
+int boardType::countUnfixedCells() {
+    int unfixedCount = 0;
+    for (auto row : fixed) {
+        unfixedCount += std::count(row.begin(), row.end(), false);
+    }
+
+    return unfixedCount;
+}
+
 
 

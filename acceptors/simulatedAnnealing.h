@@ -8,17 +8,20 @@
 class SimulatedAnnealing : public Acceptor
 {
 private:
-    const int SAMPLE_SIZE = 100;
-    const int WORSENING_ITERATION_LIMIT = 30;
-    const double COOL_RATE = 0.99;
-    const double TEMPERATURE_THRESHOLD = 0.000001;
+    const int SAMPLE_SIZE;
+    const int NON_IMPROVING_CYCLE_LIMIT;
+    const double COOL_RATE;
+    const double TEMPERATURE_THRESHOLD;
+
+    const double TEMPERATURE_FACTOR;
+    const double CYCLE_LENGTH_FACTOR;
+
     Selector &selector;
 
     double temperature;
-    double initialTemperature;
     int iterationCount;
     int iterationLimit;
-    int worseningIterationCount;
+    int cyclesWithoutImprovement;
     int iterationCycle;
     int restartCount;
     int startingObjective;
@@ -29,7 +32,10 @@ private:
     int calculateIterationLimit(boardType &board);
 
 public:
-    explicit SimulatedAnnealing(boardType &board, Selector &selector);
+    explicit SimulatedAnnealing(boardType &board, Selector &selector,
+                                double COOL_RATE,double TEMPERATURE_THRESHOLD, double TEMPERATURE_FACTOR,
+                                int SAMPLE_SIZE, int NON_IMPROVING_CYCLE_LIMIT, double CYCLE_LENGTH_FACTOR);
+
     int recalculateObjective(boardType &board) override;
     int process(boardType &board) override;
 };

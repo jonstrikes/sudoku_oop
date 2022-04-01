@@ -1,23 +1,31 @@
 {
   "General": {
-    "Timelimits": {
-      "3": 5,
-      "4": 30,
-      "5": 350
-    },
-    "SEED": 31
+    "SEED": 30
   },
-  "Acceptors": {
-    "Simulated_Annealing": {
-      "TEMP_INITIAL": 0.1,
-      "ITEARATION_LIMIT": 10000
-    }
+  "Time_limits": {
+    "3": 5,
+    "4": 30,
+    "5": 350
   },
-  "Selectors": {
-    "Reinforcement_Learning": {
-      "UTILITY_UPPER_BOUND_FACTOR": 1.0,
-      "UTILITY_INITIAL_FACTOR": 0.85
-    }
+  "Simulated_Annealing": {
+    "SAMPLE_SIZE": 100,
+    "NON_IMPROVING_CYCLE_LIMIT": 30,
+    "COOL_RATE": 0.99,
+    "TEMPERATURE_THRESHOLD": 0.000001,
+    "TEMPERATURE_FACTOR": 0.01,
+    "CYCLE_LENGTH_FACTOR": 1.00
+  },
+  "Reinforcement_Learning": {
+    "UTILITY_UPPER_BOUND_FACTOR": 5,
+    "UTILITY_INITIAL_FACTOR": 0.85,
+    "PENALTY_METHOD": "P2",
+    "REWARD_METHOD": "R2"
+  },
+  "Adaptive_Iteration_Limited_Threshold_Accepting": {
+    "W_ITERATION_THRESHOLD": 100000,
+    "K_FACTOR": 1.00,
+    "E_INITIAL": 0.3,
+    "E_FACTOR": 20.0
   },
   "CP": {
     "WORSENING_ITERATION_LIMIT": 50,

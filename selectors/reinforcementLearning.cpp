@@ -1,11 +1,10 @@
 #include "reinforcementLearning.h"
 
-/*
+/**
  * This selection method was implemented following pseudocode from
  *  "A Reinforcement Learning – Great-Deluge Hyper-heuristic for Examination Timetabling"
- *  (Ozcan, Ender, et al.)
- */
-
+ *  (Özcan, Ender, et al.)
+ **/
 ReinforcementLearning::ReinforcementLearning(int utilityUpperBoundFactor, double initialUtilityFactor,
                                              const std::string& penaltyStrategy, const std::string& rewardStrategy)
         : Selector(), lastLLHUsed(), lowerUtilityBound(), utilityValues(operators.size()), ids(operators.size()) {
@@ -51,11 +50,11 @@ void ReinforcementLearning::updateState(int objectiveChange) {
     }
 }
 
-/*
- * These negative reinforcement strategies were taken from
- *  "CHOOSING SEARCH HEURISTICS BY NONSTATIONARY REINFORCEMENT LEARNING"
- *  (Nareyek, Alexander)
- */
+/**
+* The negative reinforcement strategies used are the same as described in
+*  "CHOOSING SEARCH HEURISTICS BY NONSTATIONARY REINFORCEMENT LEARNING"
+*  (Nareyek, Alexander)
+**/
 void ReinforcementLearning::initialisePenaltyStrategy(const std::string& penaltyStrategy) {
     if(penaltyStrategy == "SUB" || penaltyStrategy == "SUBTRACTIVE" || penaltyStrategy == "P1"){
         penalty_function = [](double u){ return u - 1; };
@@ -71,12 +70,11 @@ void ReinforcementLearning::initialisePenaltyStrategy(const std::string& penalty
     }
 }
 
-
-/*
- * These positive reinforcement strategies were taken from
- *  "CHOOSING SEARCH HEURISTICS BY NONSTATIONARY REINFORCEMENT LEARNING"
- *  (Nareyek, Alexander)
- */
+/**
+* The positive reinforcement strategies used are the same as described in
+*  "CHOOSING SEARCH HEURISTICS BY NONSTATIONARY REINFORCEMENT LEARNING"
+*  (Nareyek, Alexander)
+**/
 void ReinforcementLearning::initialiseRewardStrategy(const std::string &rewardStrategy) {
     if(rewardStrategy == "ADD" || rewardStrategy == "ADDITIVE" || rewardStrategy == "R1"){
         reward_function = [](double u){ return u + 1; };

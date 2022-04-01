@@ -69,6 +69,9 @@ struct boardType {
     //returns coordinates of cells that are conflicting in row/col/block
     std::set<std::pair<uint_fast8_t, uint_fast8_t>> getConflictingCells();
 
+    //returns the number of unfixed cells
+    int countUnfixedCells();
+
 private:
     //work vector used internally to avoid reinitialising
     vector<bool> encounteredAlongRow;

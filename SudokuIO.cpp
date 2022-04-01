@@ -75,16 +75,48 @@ bool readCMDOptionalParams(char **input, int size, std::string &acceptorType, st
     return true;
 }
 
-void readAcceptorMethod(const std::string &acceptorMethod, Acceptor *&acceptor, Selector *&selector, boardType &board) {
+void readAcceptorMethod(const std::string &acceptorMethod, nlohmann::json &specs,
+                        Acceptor *&acceptor, Selector *&selector, boardType &board)
+{
     if (acceptorMethod == "--only-improve" || acceptorMethod == "-oi") {
         acceptor = new OnlyImprove(board);
     } else if (acceptorMethod == "--improve-or-equal" || acceptorMethod == "--improve-equal" ||
                acceptorMethod == "-ie" || acceptorMethod == "-ioe") {
         acceptor = new ImproveOrEqual(board);
     } else if (acceptorMethod == "--simulated-annealing" || acceptorMethod == "-sa") {
-        acceptor = new SimulatedAnnealing(board, *selector);
+        int SAMPLE_SIZE, NON_IMPROVING_CYCLE_LIMIT;
+        double COOL_RATE, TEMPERATURE_THRESHOLD, TEMPERATURE_FACTOR, CYCLE_LENGTH_FACTOR;
+
+        try {
+            SAMPLE_SIZE = specs["Simulated_Annealing"]["SAMPLE_SIZE"];
+            NON_IMPROVING_CYCLE_LIMIT = specs["Simulated_Annealing"]["NON_IMPROVING_CYCLE_LIMIT"];
+            COOL_RATE = specs["Simulated_Annealing"]["COOL_RATE"];
+            TEMPERATURE_THRESHOLD = specs["Simulated_Annealing"]["TEMPERATURE_THRESHOLD"];
+            TEMPERATURE_FACTOR = specs["Simulated_Annealing"]["TEMPERATURE_FACTOR"];
+            CYCLE_LENGTH_FACTOR = specs["Simulated_Annealing"]["CYCLE_LENGTH_FACTOR"];
+
+            acceptor = new SimulatedAnnealing(board, *selector,
+                                              COOL_RATE, TEMPERATURE_THRESHOLD, TEMPERATURE_FACTOR,
+                                              SAMPLE_SIZE, NON_IMPROVING_CYCLE_LIMIT, CYCLE_LENGTH_FACTOR);
+
+        } catch (std::exception const &ex) {
+            throw std::invalid_argument("Could not parse Simulated Annealing parameters from specs.json\n");
+        }
     } else if (acceptorMethod == "--adaptive-iteration-limited-threshold-accepting" || acceptorMethod == "-ailta") {
-        acceptor = new AdaptiveIterationLimitedThresholdAccepting(board);
+        int W_ITERATION_THRESHOLD;
+        double K_FACTOR, E_INITIAL, E_FACTOR;
+
+        try {
+            W_ITERATION_THRESHOLD = specs["Adaptive_Iteration_Limited_Threshold_Accepting"]["W_ITERATION_THRESHOLD"];
+            K_FACTOR = specs["Adaptive_Iteration_Limited_Threshold_Accepting"]["K_FACTOR"];
+            E_INITIAL = specs["Adaptive_Iteration_Limited_Threshold_Accepting"]["E_INITIAL"];
+            E_FACTOR = specs["Adaptive_Iteration_Limited_Threshold_Accepting"]["E_FACTOR"];
+
+            acceptor = new AdaptiveIterationLimitedThresholdAccepting(board, W_ITERATION_THRESHOLD, K_FACTOR,
+                                                                      E_INITIAL, E_FACTOR);
+        } catch (std::exception const &ex) {
+            throw std::invalid_argument("Could not parse AILTA parameters from specs.json\n");
+        }
     } else {
         acceptor = new ImproveOrEqual(board);
         printf("Acceptor %s not found, using default: Improve or Equal\n", acceptorMethod.c_str());

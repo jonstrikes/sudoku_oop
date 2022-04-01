@@ -48,9 +48,5 @@ int ImproveOrEqual::process(boardType &board) {
         std::cout << "Total objective: " << objective << std::endl << std::endl;
     }
 
-//    std::cout << "\nAfter obj change of: " << objChange << std::endl;
-//    std::cout << "Total objective: " << objective << std::endl << std::endl;
-//    std::cout << "Actual objective " << board.calculateObjective() << std::endl << std::endl;
-
     return objChange;
 }

@@ -1,15 +1,21 @@
 #include "simulatedAnnealing.h"
 
-SimulatedAnnealing::SimulatedAnnealing(boardType &board, Selector &aSelector) : Acceptor(board), selector(aSelector),
-                                                                                startingObjective(objective),
-                                                                                iterationCount(),
-                                                                                worseningIterationCount(),
-                                                                                iterationCycle(),
-                                                                                restartCount(),
-                                                                                isStuck(){
+SimulatedAnnealing::SimulatedAnnealing(boardType &board, Selector &selector,
+                                       const double COOL_RATE, const double TEMPERATURE_THRESHOLD,
+                                       const double TEMPERATURE_FACTOR,
+                                       const int SAMPLE_SIZE, const int NON_IMPROVING_CYCLE_LIMIT,
+                                       const double CYCLE_LENGTH_FACTOR)
+        : Acceptor(board), selector(selector),
+          COOL_RATE(COOL_RATE), TEMPERATURE_THRESHOLD(TEMPERATURE_THRESHOLD), TEMPERATURE_FACTOR(TEMPERATURE_FACTOR),
+          SAMPLE_SIZE(SAMPLE_SIZE), NON_IMPROVING_CYCLE_LIMIT(NON_IMPROVING_CYCLE_LIMIT), CYCLE_LENGTH_FACTOR(CYCLE_LENGTH_FACTOR),
+          startingObjective(objective),
+          iterationCount(),
+          iterationCycle(),
+          cyclesWithoutImprovement(),
+          restartCount(),
+          isStuck() {
 
-    temperature = calculateTemperature(board) / 100;//calculateTemperature(board, selector)/100;
-    initialTemperature = temperature;
+    temperature = calculateTemperature(board);
     iterationLimit = calculateIterationLimit(board);
 
     printf("Starting objective:     %d\n", objective);
@@ -18,12 +24,12 @@ SimulatedAnnealing::SimulatedAnnealing(boardType &board, Selector &aSelector) : 
 
 int SimulatedAnnealing::process(boardType &board) {
     if (iterationCount >= iterationLimit) {
-        //std::cout << "UPDATING TEMP " << std::endl;
+        std::cout << "UPDATING TEMP " << std::endl;
         //increment or reset bad markov chain count
-        worseningIterationCount = objective >= startingObjective ? worseningIterationCount + 1 : 0;
+        cyclesWithoutImprovement = objective >= startingObjective ? cyclesWithoutImprovement + 1 : 0;
 
         //determine whether the algorithm is stuck by comparing bad markov chain count to the limit
-        isStuck = worseningIterationCount >= WORSENING_ITERATION_LIMIT;
+        isStuck = cyclesWithoutImprovement >= NON_IMPROVING_CYCLE_LIMIT;
 
         //update temperature
         temperature *= COOL_RATE;
@@ -49,8 +55,8 @@ int SimulatedAnnealing::process(boardType &board) {
         //update local variables
         objective = board.calculateObjective();
 
-        restartCount++;
         temperature = calculateTemperature(board);
+        restartCount++;
         iterationCount = 0;
         isStuck = false;
 
@@ -60,12 +66,11 @@ int SimulatedAnnealing::process(boardType &board) {
         int objChange = board.updateObjective();
         double prob = pow(2.718282, (-objChange / temperature));
 
+        //always accept improving and probabilistically worsening move
         if (objChange <= 0 || prob > (double(fastrand()) / RAND_MAX)) {
-            //std::cout << "accepted " << objChange << " with probability " << prob << std::endl;
             objective += objChange;
             board.acceptChange();
         } else {
-            //std::cout << "rejected " << objChange << std::endl;
             board.undoChange();
         }
 
@@ -100,23 +105,19 @@ double SimulatedAnnealing::calculateTemperature(boardType &board) {
     std::transform(samples.begin(), samples.end(), diff.begin(), [mean](double x) { return x - mean; });
 
     double sq_sum = std::inner_product(diff.begin(), diff.end(), diff.begin(), 0.0);
-    return std::sqrt(sq_sum / samples.size());
+    return std::sqrt(sq_sum / samples.size()) * TEMPERATURE_FACTOR;
 }
 
 int SimulatedAnnealing::calculateIterationLimit(boardType &board) {
-    //iterationCount limit will be unfixed_count ^ 2
-    int unfixedCount = 0;
-    for (auto row : board.fixed) {
-        unfixedCount += std::count(row.begin(), row.end(), false);
-    }
+    int unfixedCount = board.countUnfixedCells();
 
-    return round(pow(unfixedCount, 2));
+    return round(pow(unfixedCount, 2)) * CYCLE_LENGTH_FACTOR;
 }
 
 int SimulatedAnnealing::recalculateObjective(boardType &board) {
-    temperature = calculateTemperature(board)/100;
     iterationCount = 0;
     isStuck = false;
+    temperature = calculateTemperature(board);
     iterationLimit = calculateIterationLimit(board);
 
     startingObjective = Acceptor::recalculateObjective(board);

@@ -1,17 +1,15 @@
 #include "adaptiveIterationLimitedThresholdAccepting.h"
 
-AdaptiveIterationLimitedThresholdAccepting::AdaptiveIterationLimitedThresholdAccepting(boardType &board) : Acceptor(board){
-    wIterationThreshold = 100000;
-    unfixedCount = 0;
-    for(auto row : board.fixed){
-        unfixedCount += std::count(row.begin(), row.end(), false);
-    }
+AdaptiveIterationLimitedThresholdAccepting::AdaptiveIterationLimitedThresholdAccepting(
+        boardType &board, int W_ITERATION_THRESHOLD,double K_FACTOR, double E_INITIAL, double E_FACTOR)
+        :
+        Acceptor(board), w_iterations(), iteration(), e(E_INITIAL),
+        W_ITERATION_THRESHOLD(W_ITERATION_THRESHOLD), K_FACTOR(K_FACTOR),
+        E_INITIAL(E_INITIAL), E_FACTOR(E_FACTOR)
+{
 
-    k = pow(unfixedCount, 2);
-    iteration = 0;
-    w_iterations = 0;
-    e = 0.3;
-
+    int unfixedCount = board.countUnfixedCells();
+    k = pow(unfixedCount, 2) * K_FACTOR;
 }
 
 int AdaptiveIterationLimitedThresholdAccepting::process(boardType &board) {
@@ -32,8 +30,8 @@ int AdaptiveIterationLimitedThresholdAccepting::process(boardType &board) {
         objective += objChange;
         board.acceptChange();
     } else {
-        if(w_iterations != 0 && w_iterations % wIterationThreshold == 0){
-            e *= 20;
+        if(w_iterations != 0 && w_iterations > W_ITERATION_THRESHOLD){
+            e *= E_FACTOR;
             std::cout << "resst called "<< e << " threshold: "<< objective * e << std::endl;
         }
         if(w_iterations >= k && (objChange < objective * e)){
@@ -53,7 +51,7 @@ int AdaptiveIterationLimitedThresholdAccepting::process(boardType &board) {
 
 void AdaptiveIterationLimitedThresholdAccepting::resetParameters() {
     w_iterations = 0;
-    e = 0.3;
+    e = E_INITIAL;
 }
 
 

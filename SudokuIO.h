@@ -34,7 +34,8 @@ bool readCMDParams(char **input, int size, std::string &puzzleDir);
 
 bool readCMDOptionalParams(char **input, int size, std::string &acceptorType, std::string &selectorType);
 
-void readAcceptorMethod(const std::string &acceptorMethod, Acceptor *&acceptor, Selector *&selector, boardType &board);
+void readAcceptorMethod(const std::string &acceptorMethod, nlohmann::json &specs, Acceptor *&acceptor,
+                        Selector *&selector, boardType &board);
 
 void readSelectorMethod(const std::string &selectorMethod, nlohmann::json &specs, Selector *&selector);
 
