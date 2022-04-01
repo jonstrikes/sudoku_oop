@@ -1,27 +1,44 @@
 #!/bin/bash
 
+:'
+This is the template for how experiments and their output will be structured.
+
+For what data is logged and how, refer to the SudokuIO class.
+
+The dataset consists of 1260 problems, there are 20 possible combinations of hyper-heuristics.
+If each problem is run 30 times, the total number of runs required is 756000.
+In order to run many experiments and later parse their output, a planned structure for output is necessary.
+The solution path of each run will uniquely identify solutions appearing in more general log files that aim to collect
+broader data:
+
+_sol.txt                   -      Solution file produced for every run of this script. Its root path is a unique
+                                     id that is used as an identifier in sel_log, acc_log, and all_experiments_log.txt.
+sel_log.txt, acc_log.txt    -     Selector, acceptor data of each unique run of the problem by the same hyperheuristic
+all_experiments_log.txt     -     General output recorded for each puzzle order dataset.
+'
+
 declare -a acceptors=( "-ioe" "-oi" "-sa" "-ailta")
 declare -a selectors=("-rd" "-rp" "-rpd" "-sr" "-rl")
 
-for order in 3 #4 5
+for order in 3 4 5
 do
   for acc in "${acceptors[@]}"
   do
     for sel in "${selectors[@]}"
     do
-      for p in `seq 0 20 100` #`seq 0 5 100`
+      for p in `seq 0 5 100`
       do
-        for p_id in {1..5} #{1..20}
+        for p_id in {1..20}
         do
-          for try_id in {1..3} #{1..30}
+          for try_id in {1..30}
           do
-            echo experiment_output/benchmarks"${order}"x"${order}"/"${acc}${sel}"/"${p}"puzzle_"${p_id}"_"${try_id}".txt
             inputPath="./cmake-build-release/benchmark_puzzles/benchmarks${order}x${order}/${p}/puzzle${p_id}.txt"
-            solutionPath="./experiment_output/benchmarks${order}x${order}/${acc}${sel}/${p}/puzzle${p_id}/${try_id}.txt"
+            solutionPath="./experiment_output/benchmarks${order}x${order}/${acc}${sel}/${p}/puzzle${p_id}/${try_id}_sol.txt"
             generalLogPath="./experiment_output/benchmarks${order}x${order}/${acc}${sel}/all_experiments.txt"
             accLogPath="./experiment_output/benchmarks${order}x${order}/${acc}${sel}/${p}/puzzle${p_id}/acc_log.txt"
             selLogPath="./experiment_output/benchmarks${order}x${order}/${acc}${sel}/${p}/puzzle${p_id}/sel_log.txt"
 
+            echo "$inputPath"
             ./cmake-build-release/sudoku_oop.exe "$inputPath" "$solutionPath" "$generalLogPath" "$accLogPath" "$selLogPath" "$acc" "$sel"
           done
         done
