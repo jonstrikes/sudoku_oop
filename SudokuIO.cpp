@@ -76,8 +76,7 @@ bool readCMDOptionalParams(char **input, int size, std::string &acceptorType, st
 }
 
 void readAcceptorMethod(const std::string &acceptorMethod, nlohmann::json &specs,
-                        Acceptor *&acceptor, Selector *&selector, boardType &board)
-{
+                        Acceptor *&acceptor, Selector *&selector, boardType &board) {
     if (acceptorMethod == "--only-improve" || acceptorMethod == "-oi") {
         acceptor = new OnlyImprove(board);
     } else if (acceptorMethod == "--improve-or-equal" || acceptorMethod == "--improve-equal" ||
@@ -151,6 +150,36 @@ void readSelectorMethod(const std::string &selectorMethod, nlohmann::json &specs
     } else {
         selector = new SimpleRandom();
         printf("Selector %s not found, using default: Simple Random\n", selectorMethod.c_str());
+    }
+}
+
+void readCpParams(boardType &board, Acceptor *&acceptor, nlohmann::json &specs, CpProcessor *&cpProcessor) {
+    int WORSENING_CYCLES_LIMIT;
+    double CYCLE_ITERATIONS_FACTOR, WORSENING_CYCLES_FACTOR, RESET_INITIAL, RESET_MIN, RESET_MAX, RESET_ALPHA, RESET_BETA;
+
+    try {
+        WORSENING_CYCLES_LIMIT = specs["CP"]["WORSENING_CYCLES_LIMIT"];
+        CYCLE_ITERATIONS_FACTOR = specs["CP"]["CYCLE_ITERATIONS_FACTOR"];
+        WORSENING_CYCLES_FACTOR = specs["CP"]["WORSENING_CYCLES_FACTOR"];
+        RESET_INITIAL = specs["CP"]["RESET_INITIAL"];
+        RESET_MIN = specs["CP"]["RESET_MIN"];
+        RESET_MAX = specs["CP"]["RESET_MAX"];
+        RESET_ALPHA = specs["CP"]["RESET_ALPHA"];
+        RESET_BETA = specs["CP"]["RESET_BETA"];
+
+        cpProcessor = new CpProcessor(board, acceptor, WORSENING_CYCLES_LIMIT, CYCLE_ITERATIONS_FACTOR,
+                                      WORSENING_CYCLES_FACTOR, RESET_INITIAL, RESET_MIN, RESET_MAX, RESET_ALPHA, RESET_BETA);
+
+    } catch (std::exception const &ex) {
+        throw std::invalid_argument("Could not parse Constraint Programming parameters from specs.json\n");
+    }
+}
+
+void readGeneralParams(boardType &board, nlohmann::json specs, double &TIME_LIMIT){
+    try {
+        TIME_LIMIT = specs["Time_limits"][std::to_string(board.n)];
+    } catch (std::exception const &ex) {
+        throw std::invalid_argument("Could not parse general parameters from specs.json\n");
     }
 }
 

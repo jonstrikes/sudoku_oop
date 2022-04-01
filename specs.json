@@ -1,6 +1,6 @@
 {
   "General": {
-    "SEED": 30
+    "SEED": 31
   },
   "Time_limits": {
     "3": 5,
@@ -28,7 +28,13 @@
     "E_FACTOR": 20.0
   },
   "CP": {
-    "WORSENING_ITERATION_LIMIT": 50,
-    "ITERATION_SIZE_FACTOR": 2
+    "WORSENING_CYCLES_LIMIT": 50,
+    "CYCLE_ITERATIONS_FACTOR": 1.0,
+    "WORSENING_CYCLES_FACTOR": 1.0,
+    "RESET_INITIAL": 1.0,
+    "RESET_MIN": 0.1,
+    "RESET_MAX": 1.0,
+    "RESET_ALPHA": 0.5,
+    "RESET_BETA": 0.2
   }
 }

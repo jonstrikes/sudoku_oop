@@ -1,8 +1,7 @@
 #include <string>
+#include <ctime>
 
 #include "SudokuIO.h"
-#include "procedures/cpProcedure.h"
-#include <ctime>
 
 int main(int argc, char **argv) {
     srand(time(nullptr));
@@ -22,47 +21,34 @@ int main(int argc, char **argv) {
     boardType board = readFile(puzzlePath);
     board.printBoard();
 
-    float resetFactor = 1.0;
-    float resetAlpha = 0.5;
-    float resetBeta = 2;
-
-    int worseningCyclesLimit = 50;
-    int worseningCycles = 0;
-
-    int cpIterationLimit = board.N * board.N * 10; // try 50
-    int bestCycleObjective = board.N * board.N; // init to max val
-    int lastCycleObjective = board.N * board.N; // init to max val
-
-    int rowConflicts = 0, colConflicts = 0;
-
-    int unfixedCount = 0;
-    for (auto row : board.fixed) {
-        unfixedCount += std::count(row.begin(), row.end(), false);
-    }
-    int cycleIterations = round(pow(unfixedCount, 2));
-    std::cout << "cp will run every " << cycleIterations * 10 << " iterations\n";
-
-    //
     board.fixBlocksWithSingleCellMissing();
     vector<vector<bool>> originalFixedMap(board.fixed);
 
     //try to fill cell implicitly
-    cpProcedure(board, resetFactor);
+    cpProcedure(board, 1.0);
     //fill remaining empty cells
     board.generateSolution();
 
-
     auto specs = readSpecification();
 
-    //initialise specified hyper-heuristic
+    //initialise CMD specified hyper-heuristic with parameters specified in specs.json and readme
     Selector *selector;
     Acceptor *acceptor;
     readSelectorMethod(selectorMethod, specs, selector);
     readAcceptorMethod(acceptorMethod, specs, acceptor, selector, board);
 
+    //initialise constraint programming procedure with parameters specified in specs.json and readme
+    CpProcessor *cpProcessor;
+    readCpParams(board, acceptor, specs, cpProcessor);
+
+    //read any other params
+    double timeLimit;
+    readGeneralParams(board, specs, timeLimit);
+
     //start of algorithm
+    bool timeOut = false;
     clock_t tStart = clock();
-    //clock_t tFinish = tStart + (timeLimit*CLOCKS_PER_SEC);
+    clock_t tFinish = tStart + (timeLimit*CLOCKS_PER_SEC);
     double stime = 0, atime = 0;
 
     int iterationLimit = 3000000;
@@ -71,6 +57,13 @@ int main(int argc, char **argv) {
     // isSolved or timout
     while (!acceptor->isSolved()) {
     //while(iterations <= iterationLimit){
+
+        //check if we still have time
+        if(clock() >= tFinish){
+            timeOut = true;
+            break;
+        }
+
         iterations++;
 
         //move selection
@@ -85,62 +78,7 @@ int main(int argc, char **argv) {
 
         selector->updateState(change);
 
-        if (iterations % (cycleIterations) == 0) {
-            std::cout << "-------------------CP-------------------\n";
-            std::cout << "running for: " << cycleIterations * board.n * 10<< " iterations\n";
-
-            lastCycleObjective = acceptor->getObjective();
-
-            if (lastCycleObjective >= bestCycleObjective)
-                cpProcedure(board, resetFactor);
-            else
-                cpProcedure(board, 0);
-
-            bestCycleObjective =
-                    lastCycleObjective < bestCycleObjective ? lastCycleObjective : bestCycleObjective;
-
-            unfixedCount = 0;
-            for (auto row : board.fixed) {
-                unfixedCount += std::count(row.begin(), row.end(), false);
-            }
-            cycleIterations = round(pow(unfixedCount, 2));
-
-            board.generateSolution();
-            //if u remove this, remove inside simulated annealing func too.
-            acceptor->recalculateObjective(board);
-
-            std::cout << "last: " << lastCycleObjective << " best: " << bestCycleObjective << " worsening cycles " << worseningCycles << " reset_f " << resetFactor << "\n" ;
-
-            if (lastCycleObjective <= bestCycleObjective) {
-                bestCycleObjective = lastCycleObjective;
-                worseningCycles = 0;
-
-                if (resetFactor > 0.1) {
-                    std::cout << "decreasing resetFactor " << resetFactor << "\n";
-                    resetFactor *= resetAlpha;
-                }
-            } else {
-                worseningCycles++;
-
-                if (worseningCycles >= worseningCyclesLimit) {
-                    board.fixed = originalFixedMap;
-                    std::cout << "After cyclic reset in CP\n";
-                    board.printBoard();
-                    board.randomiseExistingSolution();
-
-                    unfixedCount = 0;
-                    for (auto row : board.fixed) {
-                        unfixedCount += std::count(row.begin(), row.end(), false);
-                    }
-                    cycleIterations = round(pow(unfixedCount, 2));
-
-                    resetFactor = 1.0;
-                    worseningCycles = 0;
-                    bestCycleObjective = acceptor->recalculateObjective(board);
-                }
-            }
-
-        }
+        cpProcessor->run();
     }
 
     double timeTaken = (double) (clock() - tStart) / CLOCKS_PER_SEC;
@@ -153,9 +91,6 @@ int main(int argc, char **argv) {
     printf("Selector time taken:    %.5fs\n", stime / CLOCKS_PER_SEC);
     printf("Acceptor time taken:    %.5fs\n", atime / CLOCKS_PER_SEC);
     selector->printOperatorCounts();
-
-    printf("\nCol conflicts:     %d\n", colConflicts);
-    printf("\nRow conflicts:     %d\n", rowConflicts);
 
     //print and thoroughly verify final solution
     board.printBoard();

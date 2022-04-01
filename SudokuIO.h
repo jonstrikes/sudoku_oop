@@ -23,6 +23,8 @@
 #include "selectors/randomPermutationDescent.h"
 #include "selectors/reinforcementLearning.h"
 
+#include "procedures/cpProcedure.h"
+
 #include "nlohmann/json.hpp"
 
 //input functions
@@ -38,6 +40,10 @@ void readAcceptorMethod(const std::string &acceptorMethod, nlohmann::json &specs
                         Selector *&selector, boardType &board);
 
 void readSelectorMethod(const std::string &selectorMethod, nlohmann::json &specs, Selector *&selector);
+
+void readCpParams(boardType &board, Acceptor *&acceptor, nlohmann::json &specs, CpProcessor *&CpProcessor);
+
+void readGeneralParams(boardType &board, nlohmann::json specs, double &timeLimit);
 
 
 //output functions
