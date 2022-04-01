@@ -36,7 +36,7 @@ public:
                                 double COOL_RATE,double TEMPERATURE_THRESHOLD, double TEMPERATURE_FACTOR,
                                 int SAMPLE_SIZE, int NON_IMPROVING_CYCLE_LIMIT, double CYCLE_LENGTH_FACTOR);
 
-    int recalculateObjective(boardType &board) override;
+    int resetState(boardType &board) override;
     int process(boardType &board) override;
 };
 

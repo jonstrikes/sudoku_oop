@@ -13,10 +13,7 @@ RandomPermutationDescent::RandomPermutationDescent() : Selector(){
 }
 
 void RandomPermutationDescent::select(boardType &board) {
-    (*operators[permutation[currentId]])(board);
-
-    useCounts[permutation[currentId]]++;
-    iterations++;
+    applyOperator(board, permutation[currentId]);
 }
 
 void RandomPermutationDescent::updateState(int change) {

@@ -23,6 +23,8 @@ SimulatedAnnealing::SimulatedAnnealing(boardType &board, Selector &selector,
 }
 
 int SimulatedAnnealing::process(boardType &board) {
+    iteration++;
+
     if (iterationCount >= iterationLimit) {
         std::cout << "UPDATING TEMP " << std::endl;
         //increment or reset bad markov chain count
@@ -54,27 +56,26 @@ int SimulatedAnnealing::process(boardType &board) {
 
         //update local variables
         objective = board.calculateObjective();
-
         temperature = calculateTemperature(board);
         restartCount++;
+
         iterationCount = 0;
         isStuck = false;
 
         return objChange;
     } else {
+        iterationCount++;
         //std::cout << "EVALUATING " << std::endl;
-        int objChange = board.updateObjective();
+        int objChange = recalculate(board);
         double prob = pow(2.718282, (-objChange / temperature));
 
         //always accept improving and probabilistically worsening move
         if (objChange <= 0 || prob > (double(fastrand()) / RAND_MAX)) {
-            objective += objChange;
-            board.acceptChange();
+            accept(board, objChange);
         } else {
-            board.undoChange();
+            reject(board);
         }
 
-        iterationCount++;
         return objChange;
     }
 }
@@ -110,17 +111,16 @@ double SimulatedAnnealing::calculateTemperature(boardType &board) {
 
 int SimulatedAnnealing::calculateIterationLimit(boardType &board) {
     int unfixedCount = board.countUnfixedCells();
-
     return round(pow(unfixedCount, 2)) * CYCLE_LENGTH_FACTOR;
 }
 
-int SimulatedAnnealing::recalculateObjective(boardType &board) {
+int SimulatedAnnealing::resetState(boardType &board) {
     iterationCount = 0;
     isStuck = false;
     temperature = calculateTemperature(board);
     iterationLimit = calculateIterationLimit(board);
 
-    startingObjective = Acceptor::recalculateObjective(board);
+    startingObjective = Acceptor::resetState(board);
     return objective;
 }
 

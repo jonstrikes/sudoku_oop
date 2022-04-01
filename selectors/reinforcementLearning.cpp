@@ -30,14 +30,10 @@ void ReinforcementLearning::select(boardType &board) {
     }
 
     //randomly select operator with maximal utility
-    lastLLHUsed = ids[fastrand() % ids.size()];
+    applyOperator(board, ids[fastrand() % ids.size()]);
+
+    //clear work vector for next iteration
     ids.clear();
-
-    //apply operator
-    (*operators[lastLLHUsed])(board);
-
-    useCounts[lastLLHUsed]++;
-    iterations++;
 }
 
 void ReinforcementLearning::updateState(int objectiveChange) {

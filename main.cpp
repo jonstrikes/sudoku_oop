@@ -6,10 +6,10 @@
 int main(int argc, char **argv) {
     srand(time(nullptr));
 
-    std::string puzzlePath;
+    std::string puzzlePath, solutionOutPath, generalLogOutPath, accLogOutPath, selLogOutPath;
     std::string acceptorMethod, selectorMethod;
 
-    if (!readCMDParams(argv, argc, puzzlePath)) {
+    if (!readCMDParams(argv, argc, puzzlePath, solutionOutPath, generalLogOutPath, accLogOutPath, selLogOutPath)) {
         //user input could not be parsed
         return 0;
     } else {
@@ -46,9 +46,9 @@ int main(int argc, char **argv) {
     readGeneralParams(board, specs, timeLimit);
 
     //start of algorithm
-    bool timeOut = false;
+    bool timedOut = false;
     clock_t tStart = clock();
-    clock_t tFinish = tStart + (timeLimit*CLOCKS_PER_SEC);
+    clock_t tFinish = tStart + (timeLimit * CLOCKS_PER_SEC);
     double stime = 0, atime = 0;
 
     int iterationLimit = 3000000;
@@ -56,11 +56,11 @@ int main(int argc, char **argv) {
 
     // isSolved or timout
     while (!acceptor->isSolved()) {
-    //while(iterations <= iterationLimit){
+        //while(iterations <= iterationLimit){
 
         //check if we still have time
-        if(clock() >= tFinish){
-            timeOut = true;
+        if (clock() >= tFinish) {
+            timedOut = true;
             break;
         }
 
@@ -84,33 +84,40 @@ int main(int argc, char **argv) {
     double timeTaken = (double) (clock() - tStart) / CLOCKS_PER_SEC;
     double iterationsPerSecond = iterations / ((double) (clock() - tStart) / CLOCKS_PER_SEC);
 
-    printf("\nTotal iterations:     %d\n", selector->getIterations());
-    printf("Iterations per second:  %.2f\n", iterations / ((double) (clock() - tStart) / CLOCKS_PER_SEC));
-    printf("Time taken:             %.2fs\n", (double) (clock() - tStart) / CLOCKS_PER_SEC);
-    printf("Sel and Acc time:       %.2fs\n", (stime + atime) / CLOCKS_PER_SEC);
-    printf("Selector time taken:    %.5fs\n", stime / CLOCKS_PER_SEC);
-    printf("Acceptor time taken:    %.5fs\n", atime / CLOCKS_PER_SEC);
-    selector->printOperatorCounts();
+    selector->printLog();
+    acceptor->printLog();
+
+    printf("\n=========== Summary  ===========\n");
+    printf("%-20.15s %d\n", "Total iterations:", selector->getIterations());
+    printf("%-20.15s %.2fs\n", "Iterations per second:", iterations / ((double) (clock() - tStart) / CLOCKS_PER_SEC));
+    printf("%-20.15s %.2fs\n", "Time taken:", (double) (clock() - tStart) / CLOCKS_PER_SEC);
+    printf("%-20.15s %.2fs\n", "Sel and Acc time:", (stime + atime) / CLOCKS_PER_SEC);
+    printf("%-20.15s %.2fs\n", "Selector time taken:", stime / CLOCKS_PER_SEC);
+    printf("%-20.15s %.2fs\n\n", "Acceptor time taken:", atime / CLOCKS_PER_SEC);
 
     //print and thoroughly verify final solution
     board.printBoard();
     bool isSolved = board.verifySolved();
 
-    //to-file output
-    std::string outputPath, fileName, runId;
-    prepareOutput(puzzlePath, outputPath, fileName, runId, selectorMethod, acceptorMethod);
+    //std::string puzzlePath, solutionOutPath, generalLogOutPath, accLogOutPath, selLogOutPath;
 
-    writeSolution(board, outputPath, fileName, runId);
-    writeGeneralLog(board, selector, acceptor, selectorMethod, acceptorMethod, fileName, isSolved, timeTaken,
-                    iterationsPerSecond);
-    writeSelectorLog(board, selector, outputPath, fileName, runId);
-    writeAcceptorLog(board, acceptor, outputPath, fileName, runId);
+    //to-file output
+    writeSolution(board, solutionOutPath);
+
+    writeGeneralLog(board, selector, acceptor, selectorMethod, acceptorMethod,
+                    generalLogOutPath, solutionOutPath, isSolved, timeTaken, iterationsPerSecond);
+
+    writeSelectorLog(board, selector, selLogOutPath, solutionOutPath);
+
+    writeAcceptorLog(board, acceptor, accLogOutPath, solutionOutPath);
 
     //tidy up pointers
     delete acceptor;
     delete selector;
+    delete cpProcessor;
     acceptor = nullptr;
     selector = nullptr;
+    cpProcessor = nullptr;
 
     return 0;
 }

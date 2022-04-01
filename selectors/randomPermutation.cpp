@@ -10,10 +10,7 @@ RandomPermutation::RandomPermutation() : Selector(){
 }
 
 void RandomPermutation::select(boardType &board) {
-    (*operators[currentId])(board);
-
-    useCounts[permutation[currentId]] ++;
-    iterations++;
+    applyOperator(board, permutation[currentId]);
 }
 
 void RandomPermutation::updateState(int change) {

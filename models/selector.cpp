@@ -19,42 +19,60 @@ Selector::Selector(){
     std::fill(timesSpent.begin(), timesSpent.end(), 0);
 }
 
-void Selector::printOperatorCounts() {
-    printf("\nOperator counts:\n");
-    printf("Swap: %d\n", useCounts[0]);
-    printf("Insert: %d\n", useCounts[1]);
-    printf("InsertSym: %d\n", useCounts[2]);
-    printf("SwapConflicting: %d\n", useCounts[3]);
-    printf("Invert: %d\n", useCounts[4]);
-    printf("InvertSym: %d\n", useCounts[5]);
-    printf("CPOExchange: %d\n", useCounts[6]);
+void Selector::applyOperator(boardType &board, int operatorId) {
+    iterations++;
+    clock_t t = clock();
+    (*operators[operatorId])(board);
+    timesSpent[operatorId] += (double)(clock() - t);
+
+    useCounts[operatorId]++;
+}
+
+int Selector::getIterations() {
+    return iterations;
+}
+
+void Selector::printLog() {
+    printf("\n=========== Selector ===========\n");
+
+    printf("Operator counts:\n");
+    printf("%-20.15s %d\n", "Swap:", useCounts[0]);
+    printf("%-20.15s %d\n", "Insert:", useCounts[1]);
+    printf("%-20.15s %d\n", "InsertSym:", useCounts[2]);
+    printf("%-20.15s %d\n", "SwapConf:", useCounts[3]);
+    printf("%-20.15s %d\n", "Invert:", useCounts[4]);
+    printf("%-20.15s %d\n", "InvertSym:", useCounts[5]);
+    printf("%-20.15s %d\n", "CPOExchange:", useCounts[6]);
 
     printf("\nOperator times spent:\n");
-    printf("Swap: %.5f\n", timesSpent[0]);
-    printf("Insert: %.5f\n", timesSpent[1]);
-    printf("InsertSym: %.5f\n", timesSpent[2]);
-    printf("SwapConflicting: %.5f\n", timesSpent[3]);
-    printf("Invert: %.5f\n", timesSpent[4]);
-    printf("InvertSym: %.5f\n", timesSpent[5]);
-    printf("CPOExchange: %.5f\n", timesSpent[6]);
+    printf("%-20.15s %.5fs\n", "Swap:", timesSpent[0] / CLOCKS_PER_SEC);
+    printf("%-20.15s %.5fs\n", "Insert:", timesSpent[1] / CLOCKS_PER_SEC);
+    printf("%-20.15s %.5fs\n", "InsertSym:", timesSpent[2] / CLOCKS_PER_SEC);
+    printf("%-20.15s %.5fs\n", "SwapConf:", timesSpent[3] / CLOCKS_PER_SEC);
+    printf("%-20.15s %.5fs\n", "Invert:", timesSpent[4] / CLOCKS_PER_SEC);
+    printf("%-20.15s %.5fs\n", "InvertSym:", timesSpent[5] / CLOCKS_PER_SEC);
+    printf("%-20.15s %.5fs\n", "CPOExchange:", timesSpent[6] / CLOCKS_PER_SEC);
 
     printf("\nOperator Average times spent:\n");
-    printf("Swap: %.5f\n", timesSpent[0]/useCounts[0]);
-    printf("Insert: %.5f\n", timesSpent[1]/useCounts[1]);
-    printf("InsertSym: %.5f\n", timesSpent[2]/useCounts[2]);
-    printf("SwapConflicting: %.5f\n", timesSpent[3]/useCounts[3]);
-    printf("Invert: %.5f\n", timesSpent[4]/useCounts[4]);
-    printf("InvertSym: %.5f\n", timesSpent[5]/useCounts[5]);
-    printf("CPOExchange: %.5f\n", timesSpent[6]/useCounts[6]);
+    printf("%-20.15s %.25fs\n", "Swap:", timesSpent[0]/ (useCounts[0] * CLOCKS_PER_SEC));
+    printf("%-20.15s %.25fs\n", "Insert:", timesSpent[1]/ (useCounts[1] * CLOCKS_PER_SEC));
+    printf("%-20.15s %.25fs\n", "InsertSym:", timesSpent[2]/ (useCounts[2] * CLOCKS_PER_SEC));
+    printf("%-20.15s %.25fs\n", "SwapConf:", timesSpent[3]/ (useCounts[3] * CLOCKS_PER_SEC));
+    printf("%-20.15s %.25fs\n", "Invert:", timesSpent[4]/ (useCounts[4] * CLOCKS_PER_SEC));
+    printf("%-20.15s %.25fs\n", "InvertSym:", timesSpent[5]/ (useCounts[5] * CLOCKS_PER_SEC));
+    printf("%-20.15s %.25fs\n\n", "CPOExchange:", timesSpent[6]/ (useCounts[6] * CLOCKS_PER_SEC));
 }
 
 std::string Selector::getLog(){
-    std::string res = std::to_string(iterations) + "\n";
+    std::string res = std::to_string(iterations) + " " + std::to_string(operators.size()) + " ";
 
     for(int i=0; i<operators.size(); i++){
         res += std::to_string(useCounts[i]) + " ";
     }
-    res += "\n";
+
+    for(int i=0; i<operators.size(); i++){
+        res += std::to_string(timesSpent[i]) + " ";
+    }
 
     for(int i=0; i<operators.size(); i++){
         if(useCounts[i] == 0){
@@ -64,9 +82,5 @@ std::string Selector::getLog(){
         }
     }
 
-    return res;
-}
-
-int Selector::getIterations() {
-    return iterations;
+    return res + "\n";
 }

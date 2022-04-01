@@ -31,8 +31,6 @@ void CpProcessor::run() {
             return;
         }
 
-        std::cout << "Last Obj: " << lastCycleObjective << "Best Obj: " << bestCycleObjective << std::endl;
-
         if (lastCycleObjective >= bestCycleObjective)
             cpProcedure(board, resetFactor);
         else
@@ -42,7 +40,7 @@ void CpProcessor::run() {
                 lastCycleObjective < bestCycleObjective ? lastCycleObjective : bestCycleObjective;
 
         board.generateSolution();
-        acceptor.recalculateObjective(board);
+        acceptor.resetState(board);
 
         //MAYBE MAKE <= or < a parameter
         if (lastCycleObjective <= bestCycleObjective) {
@@ -64,7 +62,7 @@ void CpProcessor::run() {
 
                 resetFactor = RESET_INITIAL;
                 cyclesWithoutImprovement = 0;
-                bestCycleObjective = acceptor.recalculateObjective(board);
+                bestCycleObjective = acceptor.resetState(board);
             }
         }
 
@@ -76,8 +74,6 @@ void CpProcessor::run() {
 void cpProcedure(boardType &board, double resetProb) {
     //reset conflicting cells
     std::set<std::pair<uint_fast8_t, uint_fast8_t>> conflictingCells = board.getConflictingCells();
-
-    std::cout << "UNFIXED COUNT: " << board.countUnfixedCells() << " Conflicting size: "<< conflictingCells.size() << std::endl;
 
     for (auto cell : conflictingCells) {
         board.board[cell.first][cell.second] = -1;

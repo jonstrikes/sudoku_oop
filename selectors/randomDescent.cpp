@@ -5,10 +5,7 @@ RandomDescent::RandomDescent() : Selector() {
 }
 
 void RandomDescent::select(boardType &board) {
-    (*operators[currentId])(board);
-
-    useCounts[currentId]++;
-    iterations++;
+    applyOperator(board, currentId);
 }
 
 void RandomDescent::updateState(int change) {

@@ -5,14 +5,13 @@ OnlyImprove::OnlyImprove(boardType &board) : Acceptor(board){
 }
 
 int OnlyImprove::process(boardType &board) {
-    //reevaluate board
-    int objChange = board.updateObjective();
+    iteration++;
+    int objChange = recalculate(board);
 
     if(objChange < 0) {
-        objective += objChange;
-        board.acceptChange();
+        accept(board, objChange);
     } else {
-        board.undoChange();
+        reject(board);
     }
 
     return objChange;

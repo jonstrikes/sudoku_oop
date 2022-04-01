@@ -51,27 +51,35 @@ nlohmann::json readSpecification() {
     return specs;
 }
 
-bool readCMDParams(char **input, int size, std::string &puzzleDir) {
-    if (size != 2 && size != 4) {
+bool readCMDParams(char **input, int size, std::string &puzzleDir, std::string &solutionOutPath,
+                   std::string &generalLogOutPath, std::string &accLogOutPath, std::string &selLogOutPath) {
+    if (size != 6 && size != 8) {
         printf("Sudoku Solver\n");
-        printf("Usage: puzzlePath -acceptor -selector\n");
+        printf("Usage: puzzleFile solutionOutFile generalLogOutFile accLogOutFile selLogOutFile -acceptor -selector\n\n");
+        printf("To successfully write output to file, relative paths must be specified eg ./acceptor_logs/log1.txt \n");
+        printf("Solution file is unique and gets overwritten if solutionOutFile points to an existing file \n");
+        printf("General, Acceptor, Selector log files append to file without overwriting. \n");
         printf("If either the acceptor or selector is not specified, the program defaults to Simple Random and Improve or Equal\n");
-        printf("Acceptors: -oi, -ie, -sa, -ailta\n");
-        printf("Selectors: -sr, -rd, -rp, -rpd\n");
+        printf("Acceptance methods: -oi, -ie, -sa, -ailta\n");
+        printf("Selection methods: -sr, -rd, -rp, -rpd\n");
         return false;
     }
 
     puzzleDir = input[1];
+    solutionOutPath = input[2];
+    generalLogOutPath = input[3];
+    accLogOutPath = input[4];
+    selLogOutPath = input[5];
 
     return true;
 }
 
 bool readCMDOptionalParams(char **input, int size, std::string &acceptorType, std::string &selectorType) {
-    if (size != 4) {
+    if (size != 8) {
         return false;
     }
-    acceptorType = input[2];
-    selectorType = input[3];
+    acceptorType = input[6];
+    selectorType = input[7];
     return true;
 }
 
@@ -168,14 +176,15 @@ void readCpParams(boardType &board, Acceptor *&acceptor, nlohmann::json &specs, 
         RESET_BETA = specs["CP"]["RESET_BETA"];
 
         cpProcessor = new CpProcessor(board, acceptor, WORSENING_CYCLES_LIMIT, CYCLE_ITERATIONS_FACTOR,
-                                      WORSENING_CYCLES_FACTOR, RESET_INITIAL, RESET_MIN, RESET_MAX, RESET_ALPHA, RESET_BETA);
+                                      WORSENING_CYCLES_FACTOR, RESET_INITIAL, RESET_MIN, RESET_MAX, RESET_ALPHA,
+                                      RESET_BETA);
 
     } catch (std::exception const &ex) {
         throw std::invalid_argument("Could not parse Constraint Programming parameters from specs.json\n");
     }
 }
 
-void readGeneralParams(boardType &board, nlohmann::json specs, double &TIME_LIMIT){
+void readGeneralParams(boardType &board, nlohmann::json specs, double &TIME_LIMIT) {
     try {
         TIME_LIMIT = specs["Time_limits"][std::to_string(board.n)];
     } catch (std::exception const &ex) {
@@ -183,39 +192,20 @@ void readGeneralParams(boardType &board, nlohmann::json specs, double &TIME_LIMI
     }
 }
 
-void prepareOutput(const string &inputPath, string &outputPath, string &fileName, string &runId,
-                   const string selectorMethod, const string acceptorMethod) {
-    //remove extension from input file path
-    string path = inputPath.substr(0, inputPath.find_last_of('/'));
 
-    //extract file name and extension from input path
-    string name = inputPath.substr(inputPath.find_last_of('/'), inputPath.find_last_of('.'));
-    string extension = name.substr(name.find_last_of('.') + 1, name.size());
-    fileName = name.substr(1, name.find_last_of('.') - 1);
-
-    //mirror output path to match input and append hyper-heuristic name used and experiment id
-    outputPath = "./program-output/" + path + "/" + acceptorMethod + "_" + selectorMethod + "/" + fileName;
-
-    //generate unique run id to avoid overwriting existing experiment data
-    int uniqueId = 0;
-    while (std::filesystem::exists(outputPath + "/" + std::to_string(uniqueId)) ||
-           std::filesystem::is_directory(outputPath + "/" + std::to_string(uniqueId))) {
-        uniqueId++;
-    }
-    runId = std::to_string(uniqueId);
-}
-
-void writeSolution(boardType &board, const string &outputPath, const string &fileName, const string &runId) {
+void writeSolution(boardType &board, const string &solutionFile) {
     try {
-        //mirror path for output
-        if (!std::filesystem::is_directory(outputPath + "/" + runId) ||
-            !std::filesystem::exists(outputPath + "/" + runId)) {
-            std::filesystem::create_directories(outputPath + "/" + runId);
+        //create directory if doesn't exist
+        string relPath = std::filesystem::path(solutionFile).relative_path().parent_path().string();
+
+        if (!std::filesystem::is_directory(relPath) ||
+            !std::filesystem::exists(relPath)) {
+            std::filesystem::create_directories(relPath);
         }
 
         //create/overwrite and open
         std::ofstream solution;
-        solution.open(outputPath + "/" + runId + "/" + fileName + "_sol.txt", std::ofstream::trunc);
+        solution.open(std::filesystem::path(solutionFile).string(), std::ofstream::trunc);
 
         //write order and min value as standard format
         solution << board.n << "\n";
@@ -236,44 +226,47 @@ void writeSolution(boardType &board, const string &outputPath, const string &fil
     }
 }
 
-void writeSelectorLog(boardType &board, Selector *&selector, const std::string &outputPath, const std::string &fileName,
-                      const std::string &runId) {
-    //maybe make all experiments write general data into a single file
+void writeSelectorLog(boardType &board, Selector *&selector, const std::string &selLogOutPath,
+                      const std::string &solutionOutPath) {
     try {
-        //mirror path for output
-        if (!std::filesystem::is_directory(outputPath + "/" + runId) ||
-            !std::filesystem::exists(outputPath + "/" + runId)) {
-            std::filesystem::create_directories(outputPath + "/" + runId);
+        //create directory if doesn't exist
+        string relPath = std::filesystem::path(selLogOutPath).relative_path().parent_path().string();
+
+        if (!std::filesystem::is_directory(relPath) ||
+            !std::filesystem::exists(relPath)) {
+            std::filesystem::create_directories(relPath);
         }
 
         //create/overwrite and open
         std::ofstream selectorLog;
-        selectorLog.open(outputPath + "/" + runId + "/" + fileName + "_sel.txt", std::ofstream::trunc);
+        selectorLog.open(std::filesystem::path(selLogOutPath).string(), std::ofstream::app);
 
         //write selector data
-        selectorLog << selector->getLog();
+        selectorLog << solutionOutPath << " " << selector->getLog();
         //close output
         selectorLog.close();
+
     } catch (std::filesystem::filesystem_error const &ex) {
         printf("%s", ex.what());
     }
 }
 
-void writeAcceptorLog(boardType &board, Acceptor *&acceptor, const std::string &outputPath, const std::string &fileName,
-                      const std::string &runId) {
+void writeAcceptorLog(boardType &board, Acceptor *&acceptor, const std::string &accLogOutPath,
+                      const std::string &solutionOutPath) {
     try {
-        //mirror path for output
-        if (!std::filesystem::is_directory(outputPath + "/" + runId) ||
-            !std::filesystem::exists(outputPath + "/" + runId)) {
-            std::filesystem::create_directories(outputPath + "/" + runId);
-        }
+        //create directory if doesn't exist
+        string relPath = std::filesystem::path(accLogOutPath).relative_path().parent_path().string();
 
+        if (!std::filesystem::is_directory(relPath) ||
+            !std::filesystem::exists(relPath)) {
+            std::filesystem::create_directories(relPath);
+        }
         //create/overwrite and open
         std::ofstream acceptorLog;
-        acceptorLog.open(outputPath + "/" + runId + "/" + fileName + "_acc.txt", std::ofstream::trunc);
+        acceptorLog.open(std::filesystem::path(accLogOutPath).string(), std::ofstream::app);
 
         //write acceptor data
-        acceptorLog << acceptor->getLog();
+        acceptorLog << solutionOutPath << " " << acceptor->getLog();
         //close output
         acceptorLog.close();
 
@@ -283,24 +276,23 @@ void writeAcceptorLog(boardType &board, Acceptor *&acceptor, const std::string &
 }
 
 void writeGeneralLog(boardType &board, Selector *&selector, Acceptor *&acceptor, string selectorMethod,
-                     string acceptorMethod, std::string fileName, bool isSolved, double timeTaken,
-                     double iterationsPerSecond) {
-
-    std::string generalPath = "./program-output/experiments" + std::to_string(board.n) + "x" + std::to_string(board.n) +
-                              "/" + acceptorMethod + "_" + selectorMethod + "/";
+                     string acceptorMethod, const std::string &generalLogOutPath, const std::string &solutionOutPath,
+                     bool isSolved, double timeTaken, double iterationsPerSecond) {
     try {
-        //mirror path for output
-        if (!std::filesystem::is_directory(generalPath) ||
-            !std::filesystem::exists(generalPath)) {
-            std::filesystem::create_directories(generalPath);
+        //create directory if doesn't exist
+        string relPath = std::filesystem::path(generalLogOutPath).relative_path().parent_path().string();
+
+        if (!std::filesystem::is_directory(relPath) ||
+            !std::filesystem::exists(relPath)) {
+            std::filesystem::create_directories(relPath);
         }
 
-        //create or open log file
+        //create/overwrite and open
         std::ofstream generalLog;
-        generalLog.open(generalPath + "all_experiments_log.txt", std::fstream::app);
+        generalLog.open(std::filesystem::path(generalLogOutPath).string(), std::fstream::app);
 
         //write data
-        generalLog << fileName << " ";
+        generalLog << solutionOutPath << " ";
         generalLog << isSolved << " ";
         generalLog << std::fixed << timeTaken << " ";
         generalLog << std::fixed << selector->getIterations() << " ";

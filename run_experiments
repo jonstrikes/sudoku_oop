@@ -1,22 +1,32 @@
 #!/bin/bash
 
 declare -a acceptors=( "-ioe" "-oi" "-sa" "-ailta")
-declare -a selectors=("-rd" "-rp" "-rpd" "-sr")
+declare -a selectors=("-rd" "-rp" "-rpd" "-sr" "-rl")
 
-for acc in "${acceptors[@]}"
+for order in 3 #4 5
 do
-  for sel in "${selectors[@]}"
+  for acc in "${acceptors[@]}"
   do
-    for order in 4 #4 5
+    for sel in "${selectors[@]}"
     do
-      for p in `seq 0 5 100`
+      for p in `seq 0 20 100` #`seq 0 5 100`
       do
-        for i in {1..5} #{1..20}
+        for p_id in {1..5} #{1..20}
         do
-          echo "benchmark_puzzles/benchmarks${order}x${order}/${p}/puzzle${i}.txt"
-          ./cmake-build-release/sudoku_oop.exe ./cmake-build-release/benchmark_puzzles/benchmarks${order}x${order}/"${p}"/puzzle${i}.txt output.txt answer.txt "$acc" "$sel"
+          for try_id in {1..3} #{1..30}
+          do
+            echo experiment_output/benchmarks"${order}"x"${order}"/"${acc}${sel}"/"${p}"puzzle_"${p_id}"_"${try_id}".txt
+            inputPath="./cmake-build-release/benchmark_puzzles/benchmarks${order}x${order}/${p}/puzzle${p_id}.txt"
+            solutionPath="./experiment_output/benchmarks${order}x${order}/${acc}${sel}/${p}/puzzle${p_id}/${try_id}.txt"
+            generalLogPath="./experiment_output/benchmarks${order}x${order}/${acc}${sel}/all_experiments.txt"
+            accLogPath="./experiment_output/benchmarks${order}x${order}/${acc}${sel}/${p}/puzzle${p_id}/acc_log.txt"
+            selLogPath="./experiment_output/benchmarks${order}x${order}/${acc}${sel}/${p}/puzzle${p_id}/sel_log.txt"
+
+            ./cmake-build-release/sudoku_oop.exe "$inputPath" "$solutionPath" "$generalLogPath" "$accLogPath" "$selLogPath" "$acc" "$sel"
+          done
         done
       done
     done
   done
 done
+

@@ -32,7 +32,8 @@ boardType readFile(const std::string &fileDir);
 
 nlohmann::json readSpecification();
 
-bool readCMDParams(char **input, int size, std::string &puzzleDir);
+bool readCMDParams(char **input, int size, std::string &puzzleDir, std::string &solutionOutPath,
+                   std::string &generalLogOutPath, std::string &accLogOutPath, std::string &selLogOutPath);
 
 bool readCMDOptionalParams(char **input, int size, std::string &acceptorType, std::string &selectorType);
 
@@ -47,19 +48,16 @@ void readGeneralParams(boardType &board, nlohmann::json specs, double &timeLimit
 
 
 //output functions
-void prepareOutput(const std::string &inputPath, std::string &outputPath, std::string &fileName, std::string &runId,
-                   std::string selectorMethod, std::string acceptorMethod);
+void writeSolution(boardType &board, const std::string &outputFile);
 
-void writeSolution(boardType &board, const std::string &outputPath, const std::string &fileName,
-                   const std::string &runId);
+void writeSelectorLog(boardType &board, Selector *&selector, const std::string &selLogOutPath,
+                      const std::string &solutionOutPath);
 
-void writeSelectorLog(boardType &board, Selector *&selector, const std::string &outputPath, const std::string &fileName,
-                      const std::string &runId);
-
-void writeAcceptorLog(boardType &board, Acceptor *&acceptor, const std::string &outputPath, const std::string &fileName,
-                      const std::string &runId);
+void writeAcceptorLog(boardType &board, Acceptor *&acceptor, const std::string &accLogOutPath,
+                      const std::string &solutionOutPath);
 
 void writeGeneralLog(boardType &board, Selector *&selector, Acceptor *&acceptor, std::string selectorMethod,
-                     std::string acceptorMethod, std::string fileName, bool isSolved, double timeTaken, double iterationsPerSecond);
+                     std::string acceptorMethod, const std::string& generalLogPath, const std::string& solutionOutPath,
+                     bool isSolved, double timeTaken, double iterationsPerSecond);
 
 #endif //SUDOKU_OOP_SUDOKUIO_H
