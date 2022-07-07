@@ -1,19 +1,26 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-This is my Solver for Sudoku using hyper-heuristic search combined with human-intuitive constraint propagation. This solver has shown to be more efficient than state of the art methods for complex instances. The goal is to produce a highly scalable framework for simple production of generalised optimisation techniques. In particular, the implementation is aimed to support extension of specific algorithmic components: 
-* Move Acceptance
-* Move Selection
-* Low Level Heuristics.
-
-
-The general approach is to iteratively mutate a randomly populated Sudoku board. At each iteration, the Selection Policy will choose a
+This is my Solver for Sudoku using hyper-heuristic search combined with human-intuitive constraint propagation. 
+The general approach is to iteratively mutate a randomly populated Sudoku board.
+ ![Screenshot](docs/img/two_boards.png)
+At each iteration, the Selection Policy will choose a 
 Low Level Heuristic based on some specified strategy and apply it to produce a change. The Move Acceptance policy then evaluates
 the objective change from the perturbation and decides whether to accept or reject this change based on some specified strategy.
 
 In addition to local search, a constraint programming procedure is implemented that clears part of the board and attempts
 to fill empty cells implicitly. This procedure is run periodically and is used to help guide local search methods as well
 as help escape from local optima solutions.
+ ![Screenshot](docs/img/hybrid_algorithm.png)
+
+The goal is to produce a highly scalable framework for simple production of generalised optimisation techniques. In particular, the implementation is aimed to support extension of specific algorithmic components: 
+* Move Acceptance
+* Move Selection
+* Low Level Heuristics.
+
+This solver has shown to be more efficient than state of the art methods from the literature for complex instances. 
+ ![Screenshot](docs/img/solver_comparison.png)
+
 
 
 <!-- Input -->
